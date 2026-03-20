@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Outing Request — HostelHub</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'outing/css/style.css' %}">
+</head>
+<body>
+
+{% if messages %}
+<div class="messages-wrap">
+    {% for message in messages %}
+    <div class="msg">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <a href="{% url 'student_dashboard' %}" class="logo-text">Hostel<em>Hub</em></a>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'dashboard' %}" class="nav-back">← Dashboard</a>
+    </div>
+</nav>
+<div class="page-wrap">
+    <div class="page-header">
+        <p class="page-eye">Outing Request</p>
+        <h1 class="page-title">My <em>Outings</em></h1>
+        <p class="page-sub">Track all your outing requests and approvals.</p>
+    </div>
+    <div class="top-bar">
+        <div class="status-pills">
+            <span class="s-pill pill-pending">Pending</span>
+            <span class="s-pill pill-approved">Approved</span>
+            <span class="s-pill pill-rejected">Rejected</span>
+        </div>
+        <a href="{% url 'new_outing' %}" class="new-btn">+ New Request</a>
+    </div>
+    {% if requests %}
+    <div class="outing-list">
+        {% for req in requests %}
+        <div class="outing-card status-{{ req.status }}" data-i="{{ forloop.counter0 }}">
+            <div class="oc-accent"></div>
+            <div class="oc-top">
+                <div class="oc-left">
+                    <span class="oc-destination">🚪 {{ req.destination }}</span>
+                    <span class="oc-date">
+                        {{ req.out_date|date:"d M Y" }} {{ req.out_time|time:"H:i" }}
+                        → {{ req.return_date|date:"d M Y" }} {{ req.return_time|time:"H:i" }}
+                    </span>
+                </div>
+                <span class="oc-status st-{{ req.status }}">
+                    {% if req.status == 'pending' %}⏳ Pending
+                    {% elif req.status == 'parent_approved' %}✅ Parent Approved
+                    {% elif req.status == 'parent_rejected' %}❌ Parent Rejected
+                    {% elif req.status == 'warden_approved' %}✅ Warden Approved
+                    {% elif req.status == 'warden_rejected' %}❌ Warden Rejected
+                    {% elif req.status == 'checked_out' %}🚪 Checked Out
+                    {% elif req.status == 'returned' %}🏠 Returned
+                    {% endif %}
+                </span>
+            </div>
+            <p class="oc-reason">{{ req.reason|truncatechars:100 }}</p>
+            <div class="oc-footer">
+                <span class="oc-created">Submitted {{ req.created_at|date:"d M Y" }}</span>
+                {% if req.status == 'warden_approved' or req.status == 'checked_out' %}
+                <a href="{% url 'view_qr' req.id %}" class="qr-btn">📱 View QR Pass</a>
+                {% endif %}
+                {% if req.status == 'pending' %}
+                <div class="parent-link-wrap">
+                    <span class="parent-link-label">Share with Parent:</span>
+                    <span class="parent-link" id="plink-{{ req.id }}">
+                        {{ request.scheme }}://{{ request.get_host }}/outing/parent/{{ req.parent_token }}/
+                    </span>
+                    <button class="copy-btn" onclick="copyLink('plink-{{ req.id }}')">Copy Link</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🚪</div>
+        <p>No outing requests yet.</p>
+        <p class="empty-sub">Click New Request to submit one.</p>
+    </div>
+    {% endif %}
+</div>
+<script src="{% static 'outing/js/script.js' %}"></script>
+</body>
+</html>

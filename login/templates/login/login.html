@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HostelHub — Login</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'login/css/style.css' %}">
+</head>
+<body>
+
+<!-- SLIDESHOW BACKGROUND -->
+<div class="bg-slideshow">
+    <div class="bg-slide active"></div>
+    <div class="bg-slide"></div>
+    <div class="bg-slide"></div>
+    <div class="bg-slide"></div>
+</div>
+<div class="bg-overlay"></div>
+
+<!-- LEFT PANEL — BRANDING -->
+<div class="left-panel">
+    <div class="left-content">
+
+        <div class="brand">
+            <div class="brand-dot"></div>
+            <span class="brand-name">Hostel<em>Hub</em></span>
+        </div>
+
+        <div class="left-hero">
+            <h1 class="left-title">
+                Your Hostel.<br>
+                <em>Reimagined.</em>
+            </h1>
+            <p class="left-sub">
+                A complete digital portal for students and wardens.
+                Everything in one place.
+            </p>
+        </div>
+
+        <div class="feature-list">
+            <div class="feature-item" data-i="0">
+                <span class="fi-icon">🍽️</span>
+                <span>Mess Voting</span>
+            </div>
+            <div class="feature-item" data-i="1">
+                <span class="fi-icon">📝</span>
+                <span>Complaints</span>
+            </div>
+            <div class="feature-item" data-i="2">
+                <span class="fi-icon">🚪</span>
+                <span>Outing + QR Pass</span>
+            </div>
+            <div class="feature-item" data-i="3">
+                <span class="fi-icon">🚨</span>
+                <span>Emergency SOS</span>
+            </div>
+            <div class="feature-item" data-i="4">
+                <span class="fi-icon">🌙</span>
+                <span>Night Attendance</span>
+            </div>
+            <div class="feature-item" data-i="5">
+                <span class="fi-icon">📢</span>
+                <span>Notice Board</span>
+            </div>
+        </div>
+
+        <div class="left-footer">
+            <span class="online-dot"></span>
+            System Online · 2026–27
+        </div>
+
+    </div>
+</div>
+
+<!-- RIGHT PANEL — LOGIN -->
+<div class="right-panel">
+    <div class="right-content">
+
+        <div class="form-head">
+            <h2 class="form-title">Login</h2>
+            <p class="form-sub">Access your hostel portal</p>
+        </div>
+
+        <form method="POST" id="loginForm">
+            {% csrf_token %}
+
+            <!-- ROLE -->
+            <div class="role-row">
+                <label class="role-card" id="cardStudent">
+                    <input type="radio" name="role"
+                           value="student" required>
+                    <span class="rc-inner">
+                        <span class="rc-icon">🎓</span>
+                        <span class="rc-name">Student</span>
+                    </span>
+                </label>
+                <label class="role-card" id="cardWarden">
+                    <input type="radio" name="role"
+                           value="warden">
+                    <span class="rc-inner">
+                        <span class="rc-icon">👮</span>
+                        <span class="rc-name">Warden</span>
+                    </span>
+                </label>
+            </div>
+
+            <!-- USERNAME -->
+            <div class="field-group">
+                <label class="field-lbl">Username</label>
+                <input type="text" name="username"
+                    class="field-inp"
+                    placeholder="Register No / Username"
+                    required autocomplete="username">
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="field-group">
+                <label class="field-lbl">Password</label>
+                <div class="pass-wrap">
+                    <input type="password" name="password"
+                        id="passInput"
+                        class="field-inp"
+                        placeholder="Your password"
+                        required autocomplete="current-password">
+                    <button type="button"
+                            class="eye-btn" id="eyeBtn">👁</button>
+                </div>
+            </div>
+
+            <!-- ROOM — student only -->
+            <div class="field-group" id="roomGroup"
+                 style="display:none">
+                <label class="field-lbl">Room Number</label>
+                <input type="text" name="room"
+                    id="roomInput"
+                    class="field-inp"
+                    placeholder="e.g. 411">
+            </div>
+
+            {% if error %}
+            <div class="error-box">
+                ⚠️ {{ error }}
+            </div>
+            {% endif %}
+
+            <button type="submit" class="login-btn" id="loginBtn">
+                <span id="btnText">Login</span>
+                <span class="btn-arr">→</span>
+                <div class="btn-ripple"></div>
+            </button>
+
+        </form>
+
+        <p class="right-foot">
+            HostelHub · 2026–27 · Student & Warden Portal
+        </p>
+
+    </div>
+</div>
+
+<script src="{% static 'login/js/script.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Post Notice — Warden</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'warden_notices/css/style.css' %}">
+</head>
+<body>
+
+
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em></span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'warden_notices' %}" class="nav-back">← Back</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Notice Board</p>
+        <h1 class="page-title">Post a <em>Notice</em></h1>
+        <p class="page-sub">Notice will be visible to all students immediately.</p>
+    </div>
+
+    <!-- PREVIEW PILLS -->
+    <div class="priority-preview">
+        <div class="pp-item pp-urgent" id="prev-urgent">
+            🚨 Urgent — For emergencies
+        </div>
+        <div class="pp-item pp-important" id="prev-important">
+            ⚠️ Important — Must read
+        </div>
+        <div class="pp-item pp-normal pp-active" id="prev-normal">
+            📢 Normal — General info
+        </div>
+    </div>
+
+    <div class="form-card">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" name="title" class="form-input"
+                    placeholder="e.g. Water supply off tomorrow" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Content</label>
+                <textarea name="content" class="form-input" rows="6"
+                    placeholder="Write the notice content here..." required></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Priority</label>
+                    <div class="priority-opts">
+                        <label class="prio-opt">
+                            <input type="radio" name="priority"
+                                value="normal" checked id="pnormal">
+                            <span class="popt-label popt-normal">📢 Normal</span>
+                        </label>
+                        <label class="prio-opt">
+                            <input type="radio" name="priority"
+                                value="important" id="pimportant">
+                            <span class="popt-label popt-important">⚠️ Important</span>
+                        </label>
+                        <label class="prio-opt">
+                            <input type="radio" name="priority"
+                                value="urgent" id="purgent">
+                            <span class="popt-label popt-urgent">🚨 Urgent</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Expires On (optional)</label>
+                    <input type="date" name="expires_at" class="form-input">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'warden_notices' %}" class="cancel-btn">Cancel</a>
+                <button type="submit" class="submit-btn">Post Notice →</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script src="{% static 'warden_notices/js/script.js' %}"></script>
+</body>
+</html>
+
+
+
+
+

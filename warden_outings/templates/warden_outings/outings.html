@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Outings — Warden</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'warden_outings/css/style.css' %}">
+</head>
+<body>
+
+
+
+{% if messages %}
+<div class="messages-wrap">
+    {% for message in messages %}
+    <div class="msg">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em></span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'warden_dash' %}" class="nav-back">← Dashboard</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Outing Requests</p>
+        <h1 class="page-title">Student <em>Outings</em></h1>
+        <p class="page-sub">Review parent-approved requests and generate QR passes.</p>
+    </div>
+
+    <!-- PENDING REQUESTS -->
+    {% if pending %}
+    <div class="section-header">
+        <h2 class="section-title">
+            ⏳ Pending Approval
+            <span class="section-count">{{ pending_count }}</span>
+        </h2>
+    </div>
+    <div class="outing-list">
+        {% for req in pending %}
+        <div class="outing-card card-pending" data-i="{{ forloop.counter0 }}">
+            <div class="oc-accent accent-pending"></div>
+            <div class="oc-top">
+                <div class="oc-left">
+                    <span class="oc-student">
+                        👤 {{ req.student.first_name|default:req.student.username }}
+                        — Room {{ req.student.last_name }}
+                    </span>
+                    <span class="oc-dest">🚪 {{ req.destination }}</span>
+                    <span class="oc-date">
+                        {{ req.out_date|date:"d M Y" }} {{ req.out_time|time:"H:i" }}
+                        → {{ req.return_date|date:"d M Y" }} {{ req.return_time|time:"H:i" }}
+                    </span>
+                </div>
+                <span class="oc-status st-pending">⏳ Parent Approved</span>
+            </div>
+            <p class="oc-reason">{{ req.reason }}</p>
+            {% if req.parent_remarks %}
+            <div class="oc-parent-note">
+                👨‍👩‍👦 Parent Note: {{ req.parent_remarks }}
+            </div>
+            {% endif %}
+            <div class="oc-footer">
+                <span class="oc-submitted">
+                    Submitted {{ req.created_at|date:"d M Y" }}
+                </span>
+                <a href="{% url 'warden_outing_detail' req.id %}"
+                   class="review-btn">
+                    Review & Decide →
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- CURRENTLY OUT -->
+    {% if checked_out %}
+    <div class="section-header">
+        <h2 class="section-title">🚪 Currently Out</h2>
+    </div>
+    <div class="outing-list">
+        {% for req in checked_out %}
+        <div class="outing-card card-out" data-i="{{ forloop.counter0 }}">
+            <div class="oc-accent accent-out"></div>
+            <div class="oc-top">
+                <div class="oc-left">
+                    <span class="oc-student">
+                        👤 {{ req.student.first_name|default:req.student.username }}
+                        — Room {{ req.student.last_name }}
+                    </span>
+                    <span class="oc-dest">🚪 {{ req.destination }}</span>
+                    <span class="oc-date">
+                        Returns: {{ req.return_date|date:"d M Y" }}
+                        at {{ req.return_time|time:"H:i" }}
+                    </span>
+                </div>
+                <span class="oc-status st-checked_out">🚪 Checked Out</span>
+            </div>
+            {% if req.checked_out_at %}
+            <p class="oc-reason">
+                Left at {{ req.checked_out_at|date:"d M Y H:i" }}
+            </p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ALL RECENT OUTINGS -->
+    <div class="section-header">
+        <h2 class="section-title">📋 All Recent Requests</h2>
+    </div>
+
+    {% if all_outings %}
+    <div class="all-table-wrap">
+        <div class="all-header">
+            <span>Student</span>
+            <span>Destination</span>
+            <span>Out Date</span>
+            <span>Status</span>
+            <span>Action</span>
+        </div>
+        {% for req in all_outings %}
+        <div class="all-row" data-i="{{ forloop.counter0 }}">
+            <span class="ar-student">
+                {{ req.student.first_name|default:req.student.username }}
+                <span class="ar-room">Rm {{ req.student.last_name }}</span>
+            </span>
+            <span class="ar-dest">{{ req.destination }}</span>
+            <span class="ar-date">{{ req.out_date|date:"d M Y" }}</span>
+            <span class="ar-status">
+                <span class="status-badge st-{{ req.status }}">
+                    {% if req.status == 'pending' %}⏳ Pending
+                    {% elif req.status == 'parent_approved' %}✅ Parent OK
+                    {% elif req.status == 'parent_rejected' %}❌ Parent Rejected
+                    {% elif req.status == 'warden_approved' %}✅ Approved
+                    {% elif req.status == 'warden_rejected' %}❌ Rejected
+                    {% elif req.status == 'checked_out' %}🚪 Out
+                    {% elif req.status == 'returned' %}🏠 Returned
+                    {% endif %}
+                </span>
+            </span>
+            <span class="ar-action">
+                {% if req.status == 'parent_approved' %}
+                <a href="{% url 'warden_outing_detail' req.id %}"
+                   class="action-btn">Review →</a>
+                {% else %}
+                <span class="ar-done">—</span>
+                {% endif %}
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🚪</div>
+        <p>No outing requests from your students.</p>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'warden_outings/js/script.js' %}"></script>
+</body>
+</html>
+
+
+
+
+

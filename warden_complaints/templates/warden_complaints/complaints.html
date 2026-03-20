@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Complaints — Warden</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'warden_complaints/css/style.css' %}">
+</head>
+<body>
+
+
+
+{% if messages %}
+<div class="messages-wrap">
+    {% for message in messages %}
+    <div class="msg">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em></span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'warden_dash' %}" class="nav-back">← Dashboard</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Complaint System</p>
+        <h1 class="page-title">Student <em>Complaints</em></h1>
+        <p class="page-sub">Review and respond to complaints from your students.</p>
+    </div>
+
+    <!-- STATUS COUNTS -->
+    <div class="counts-row">
+        <a href="?status=all"
+           class="count-card {% if status_filter == 'all' %}active{% endif %}">
+            <span class="cc-num">{{ pending_count|add:ongoing_count|add:completed_count }}</span>
+            <span class="cc-lbl">All</span>
+        </a>
+        <a href="?status=pending"
+           class="count-card {% if status_filter == 'pending' %}active active-pending{% endif %}">
+            <span class="cc-num" style="color:var(--amber)">{{ pending_count }}</span>
+            <span class="cc-lbl">⏳ Pending</span>
+        </a>
+        <a href="?status=ongoing"
+           class="count-card {% if status_filter == 'ongoing' %}active active-ongoing{% endif %}">
+            <span class="cc-num" style="color:#60a5fa">{{ ongoing_count }}</span>
+            <span class="cc-lbl">🔄 Ongoing</span>
+        </a>
+        <a href="?status=completed"
+           class="count-card {% if status_filter == 'completed' %}active active-done{% endif %}">
+            <span class="cc-num" style="color:#5cdb95">{{ completed_count }}</span>
+            <span class="cc-lbl">✅ Completed</span>
+        </a>
+    </div>
+
+    <!-- COMPLAINTS LIST -->
+    {% if complaints %}
+    <div class="complaints-list">
+        {% for c in complaints %}
+        <div class="complaint-card st-{{ c.status }}" data-i="{{ forloop.counter0 }}">
+            <div class="cc-accent cs-accent-{{ c.status }}"></div>
+
+            <div class="cc-top">
+                <div class="cc-left">
+                    <span class="cc-student">
+                        👤 {{ c.student.first_name|default:c.student.username }}
+                        — Room {{ c.student.last_name }}
+                    </span>
+                    <h3 class="cc-title">{{ c.title }}</h3>
+                    <span class="cc-category">{{ c.category }}</span>
+                </div>
+                <span class="cc-status cs-{{ c.status }}">
+                    {% if c.status == 'pending' %}⏳ Pending
+                    {% elif c.status == 'ongoing' %}🔄 Ongoing
+                    {% else %}✅ Completed{% endif %}
+                </span>
+            </div>
+
+            <p class="cc-desc">{{ c.description }}</p>
+
+            {% if c.admin_reply %}
+            <div class="cc-reply">
+                <span class="reply-label">Your Reply:</span>
+                {{ c.admin_reply }}
+            </div>
+            {% endif %}
+
+            <div class="cc-footer">
+                <span class="cc-date">{{ c.created_at|date:"d M Y" }}</span>
+                <a href="{% url 'warden_complaint_reply' c.id %}" class="reply-btn">
+                    {% if c.status == 'pending' %}Respond →
+                    {% else %}Update →{% endif %}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📝</div>
+        <p>No complaints found.</p>
+        <p class="empty-sub">
+            {% if status_filter != 'all' %}
+            No {{ status_filter }} complaints from your students.
+            {% else %}
+            No complaints from your students yet.
+            {% endif %}
+        </p>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'warden_complaints/js/script.js' %}"></script>
+</body>
+</html>
+
+
+
+
+

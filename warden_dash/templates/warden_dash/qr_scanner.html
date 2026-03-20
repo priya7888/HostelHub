@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>QR Scanner — Warden</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'warden_dash/css/style.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body>
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em></span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span class="theme-icon" id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span class="theme-label" id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'warden_dash' %}" class="nav-exit">← Dashboard</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+    <div class="page-header">
+        <p class="page-eye">Gate Scanner</p>
+        <h1 class="page-title">QR <em>Scanner</em></h1>
+        <p class="page-sub">
+            Scan student QR pass at gate.
+            Only your assigned students will be processed.
+        </p>
+    </div>
+
+    <div class="scanner-card">
+
+        <div class="scanner-info">
+            <span class="scanner-badge">📷 Camera Scanner</span>
+            <p class="scanner-sub">
+                Point camera at student QR pass
+            </p>
+        </div>
+
+        <div id="qr-reader"
+             style="width:100%;max-width:400px;margin:0 auto 20px;">
+        </div>
+
+        <div id="scan-status" class="scan-status hidden">
+            <div class="status-icon">⏳</div>
+            <p class="status-text">Processing...</p>
+        </div>
+
+        <div class="scanner-divider">— or enter token manually —</div>
+
+        <div class="manual-input">
+            <input type="text" id="manualToken"
+                class="token-input"
+                placeholder="Paste QR token here...">
+            <button onclick="processManual()" class="scan-btn">
+                Process →
+            </button>
+        </div>
+
+        <p class="scanner-help">
+            💡 To get token: ask student to open their QR pass →
+            copy the UUID from the URL
+        </p>
+
+    </div>
+</div>
+
+<script src="{% static 'warden_dash/js/script.js' %}"></script>
+<script>
+let scanning = true;
+const html5QrCode = new Html5Qrcode("qr-reader");
+
+const config = {
+    fps: 15,
+    qrbox: { width: 250, height: 250 },
+    aspectRatio: 1.0,
+    disableFlip: false,
+};
+
+html5QrCode.start(
+    { facingMode: "environment" },
+    config,
+    (decodedText) => {
+        if (!scanning) return;
+        scanning = false;
+        html5QrCode.stop().then(() => {
+            processQR(decodedText);
+        }).catch(() => {
+            processQR(decodedText);
+        });
+    },
+    () => {}
+).catch((err) => {
+    console.log('Camera error:', err);
+    // Try front camera if back camera fails
+    html5QrCode.start(
+        { facingMode: "user" },
+        config,
+        (decodedText) => {
+            if (!scanning) return;
+            scanning = false;
+            html5QrCode.stop().then(() => {
+                processQR(decodedText);
+            }).catch(() => {
+                processQR(decodedText);
+            });
+        },
+        () => {}
+    ).catch(() => {
+        document.getElementById('qr-reader').innerHTML =
+            '<div style="padding:30px;text-align:center;color:var(--text3)">' +
+            '<div style="font-size:3rem;margin-bottom:12px">📷</div>' +
+            '<p>Camera not available.<br>Use manual input below.</p>' +
+            '</div>';
+    });
+});
+
+function processQR(text) {
+    // Show processing status
+    document.getElementById('scan-status').classList.remove('hidden');
+
+    let token = text.trim();
+
+    // Extract token from full URL
+    if (token.includes('/scan/')) {
+        token = token.split('/scan/')[1].replace(/\//g, '');
+    } else if (token.includes('/outing/scan/')) {
+        token = token.split('/outing/scan/')[1].replace(/\//g, '');
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(token)) {
+        alert('Invalid QR code. Please try again.');
+        scanning = true;
+        document.getElementById('scan-status').classList.add('hidden');
+        // Restart scanner
+        location.reload();
+        return;
+    }
+
+    // Redirect to process URL
+    window.location.href = '/warden/dash/scan/' + token + '/';
+}
+
+function processManual() {
+    const token = document.getElementById('manualToken').value.trim();
+    if (!token) {
+        alert('Please enter or paste a token');
+        return;
+    }
+    processQR(token);
+}
+
+// Allow pressing Enter in manual input
+document.getElementById('manualToken').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') processManual();
+});
+</script>
+</body>
+</html>

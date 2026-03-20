@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Parent Approval — HostelHub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        [data-theme="dark"] {
+            --bg:#0d0d0d; --card-bg:#141414;
+            --text:#f5f2ed; --text2:#a09890; --text3:#5a5248;
+            --border:rgba(255,255,255,0.08);
+            --amber:#e8b96a; --amber-soft:rgba(232,185,106,0.1);
+            --amber-border:rgba(232,185,106,0.28);
+            --green:#5cdb95; --red:#e05555;
+        }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{
+            background:var(--bg);color:var(--text);
+            font-family:'Outfit',sans-serif;
+            min-height:100vh;
+            display:flex;align-items:center;justify-content:center;
+            padding:20px;
+        }
+        .parent-card{
+            background:var(--card-bg);
+            border:1px solid var(--border);
+            border-radius:24px;padding:40px;
+            max-width:520px;width:100%;
+            box-shadow:0 8px 40px rgba(0,0,0,0.5);
+        }
+        .pc-logo{
+            font-family:'Playfair Display',serif;
+            font-size:1.1rem;font-weight:700;
+            color:var(--text);margin-bottom:28px;
+        }
+        .pc-logo em{font-style:normal;color:var(--amber);}
+        .pc-title{
+            font-family:'Playfair Display',serif;
+            font-size:1.6rem;font-weight:900;
+            color:var(--text);margin-bottom:6px;
+        }
+        .pc-sub{font-size:0.88rem;color:var(--text3);margin-bottom:28px;}
+        .detail-row{
+            display:flex;justify-content:space-between;
+            padding:12px 0;border-bottom:1px solid var(--border);
+            font-size:0.88rem;
+        }
+        .detail-row:last-of-type{border-bottom:none;margin-bottom:24px;}
+        .detail-label{color:var(--text3);}
+        .detail-val{color:var(--text);font-weight:500;}
+        .remark-input{
+            width:100%;padding:12px 16px;
+            background:#1a1a1a;border:1px solid var(--border);
+            border-radius:12px;color:var(--text);
+            font-family:'Outfit',sans-serif;font-size:0.9rem;
+            outline:none;resize:none;margin-bottom:20px;
+        }
+        .remark-input:focus{border-color:var(--amber);}
+        .btn-row{display:flex;gap:12px;}
+        .approve-btn{
+            flex:1;padding:14px;
+            background:var(--green);color:#0d0d0d;
+            font-family:'Outfit',sans-serif;
+            font-size:0.92rem;font-weight:700;
+            border:none;border-radius:12px;cursor:pointer;
+            transition:all 0.3s;
+        }
+        .approve-btn:hover{transform:translateY(-2px);opacity:0.9;}
+        .reject-btn{
+            flex:1;padding:14px;
+            background:var(--red);color:#fff;
+            font-family:'Outfit',sans-serif;
+            font-size:0.92rem;font-weight:700;
+            border:none;border-radius:12px;cursor:pointer;
+            transition:all 0.3s;
+        }
+        .reject-btn:hover{transform:translateY(-2px);opacity:0.9;}
+        .warning{font-size:0.78rem;color:var(--text3);text-align:center;margin-top:16px;}
+    </style>
+</head>
+<body>
+<div class="parent-card">
+    <div class="pc-logo">Hostel<em>Hub</em></div>
+    <h2 class="pc-title">Outing Request</h2>
+    <p class="pc-sub">
+        Your child <strong style="color:var(--amber)">
+        {{ outing.student.first_name|default:outing.student.username }}
+        </strong> has requested permission to go out.
+    </p>
+    <div class="detail-row">
+        <span class="detail-label">Destination</span>
+        <span class="detail-val">{{ outing.destination }}</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Reason</span>
+        <span class="detail-val">{{ outing.reason }}</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Going Out</span>
+        <span class="detail-val">{{ outing.out_date|date:"d M Y" }} at {{ outing.out_time|time:"H:i" }}</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Returning</span>
+        <span class="detail-val">{{ outing.return_date|date:"d M Y" }} at {{ outing.return_time|time:"H:i" }}</span>
+    </div>
+    {% if outing.status == 'pending' %}
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="remarks" class="remark-input" rows="3"
+            placeholder="Add a remark (optional)..."></textarea>
+        <div class="btn-row">
+            <button type="submit" name="action" value="approve" class="approve-btn">✅ Approve</button>
+            <button type="submit" name="action" value="reject" class="reject-btn">❌ Reject</button>
+        </div>
+    </form>
+    <p class="warning">This link can only be used once. Your decision will be sent to the hostel warden.</p>
+    {% else %}
+    <p style="text-align:center;color:var(--text3);padding:20px 0;">
+        You have already responded to this request.
+    </p>
+    {% endif %}
+</div>
+</body>
+</html>

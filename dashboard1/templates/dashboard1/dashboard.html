@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Dashboard — HostelHub</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'dashboard1/css/style.css' %}">
+</head>
+<body>
+
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em></span>
+    </div>
+    <div class="nav-mid">
+        <span class="nav-tag">Student Portal</span>
+        <span class="nav-sep">·</span>
+        <span class="nav-tag">2026 – 27</span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track">
+                <span class="theme-thumb"></span>
+            </span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'logout' %}" class="nav-exit">Sign Out →</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Dashboard</p>
+        <h1 class="page-title">
+            Hello, <em>{{ request.user.first_name|default:request.user.username }}</em>
+        </h1>
+        <p class="page-sub">
+            Room {{ request.user.last_name }} · What would you like to do today?
+        </p>
+    </div>
+
+    <div class="cards-grid">
+
+        <a href="{% url 'food_voting' %}" class="svc-card" data-i="0">
+            <div class="card-accent"></div>
+            <div class="card-header">
+                <div class="card-icon-wrap">
+                    <span class="card-icon">🍽️</span>
+                </div>
+                <span class="card-num">01</span>
+            </div>
+            <h3 class="card-title">Mess Food Voting</h3>
+            <p class="card-desc">Vote for today's meals and shape the weekly menu.</p>
+            <div class="card-footer">
+                <span class="card-cta">Open</span>
+                <span class="card-arrow">→</span>
+            </div>
+        </a>
+
+        <a href="{% url 'complaints' %}" class="svc-card" data-i="1">
+            <div class="card-accent"></div>
+            <div class="card-header">
+                <div class="card-icon-wrap">
+                    <span class="card-icon">📝</span>
+                </div>
+                <span class="card-num">02</span>
+            </div>
+            <h3 class="card-title">Complaint System</h3>
+            <p class="card-desc">Report issues directly to the warden.</p>
+            <div class="card-footer">
+                <span class="card-cta">Open</span>
+                <span class="card-arrow">→</span>
+            </div>
+        </a>
+
+        <a href="{% url 'lost_found' %}" class="svc-card" data-i="2">
+            <div class="card-accent"></div>
+            <div class="card-header">
+                <div class="card-icon-wrap">
+                    <span class="card-icon">🔍</span>
+                </div>
+                <span class="card-num">03</span>
+            </div>
+            <h3 class="card-title">Lost & Found</h3>
+            <p class="card-desc">Browse or post lost and found items.</p>
+            <div class="card-footer">
+                <span class="card-cta">Open</span>
+                <span class="card-arrow">→</span>
+            </div>
+        </a>
+
+        <a href="{% url 'notices' %}" class="svc-card" data-i="3">
+            <div class="card-accent"></div>
+            <div class="card-header">
+                <div class="card-icon-wrap">
+                    <span class="card-icon">📢</span>
+                </div>
+                <span class="card-num">04</span>
+            </div>
+            <h3 class="card-title">Notice Board</h3>
+            <p class="card-desc">Stay updated with hostel announcements.</p>
+            <div class="card-footer">
+                <span class="card-cta">Open</span>
+                <span class="card-arrow">→</span>
+            </div>
+        </a>
+
+        <a href="{% url 'attendance' %}" class="svc-card" data-i="4">
+            <div class="card-accent"></div>
+            <div class="card-header">
+                <div class="card-icon-wrap">
+                    <span class="card-icon">🌙</span>
+                </div>
+                <span class="card-num">05</span>
+            </div>
+            <h3 class="card-title">Night Attendance</h3>
+            <p class="card-desc">Check your attendance status and records.</p>
+            <div class="card-footer">
+                <span class="card-cta">Open</span>
+                <span class="card-arrow">→</span>
+            </div>
+        </a>
+        <!-- Outing Request -->
+<a href="{% url 'outing_list' %}" class="svc-card" data-i="5">
+    <div class="card-accent"></div>
+    <div class="card-header">
+        <div class="card-icon-wrap">
+            <span class="card-icon">🚪</span>
+        </div>
+        <span class="card-num">06</span>
+    </div>
+    <h3 class="card-title">Outing Request</h3>
+    <p class="card-desc">Request permission to go out. Get parent and warden approval with QR pass.</p>
+    <div class="card-footer">
+        <span class="card-cta">Open</span>
+        <span class="card-arrow">→</span>
+    </div>
+</a>
+
+        <a href="{% url 'send_sos' %}" class="svc-card svc-sos" data-i="6">
+    <div class="card-accent sos-accent"></div>
+    <div class="card-header">
+        <div class="card-icon-wrap sos-icon-wrap">
+            <span class="card-icon">🚨</span>
+            <span class="sos-ping"></span>
+        </div>
+        <span class="card-num sos-num">07</span>
+    </div>
+    <div class="card-body-row">
+        <h3 class="card-title">Emergency SOS</h3>
+        <p class="card-desc">Send instant alerts to wardens and security with a single tap. Available 24/7 — your safety is our priority.</p>
+    </div>
+    <div class="card-footer">
+        <span class="card-cta sos-cta">Alert Now</span>
+        <span class="card-arrow sos-arrow">→</span>
+    </div>
+</a>
+
+    </div>
+
+</div>
+
+<script src="{% static 'dashboard1/js/script.js' %}"></script>
+</body>
+</html>

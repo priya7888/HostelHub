@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Mess Food Voting — HostelHub</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'mess/css/style.css' %}">
+</head>
+<body>
+
+{% if messages %}
+<div class="messages-wrap">
+    {% for message in messages %}
+    <div class="msg">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <a href="{% url 'student_dashboard' %}" class="logo-text">Hostel<em>Hub</em></a>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track">
+                <span class="theme-thumb"></span>
+            </span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'student_dashboard' %}" class="nav-back">← Back</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Mess</p>
+        <h1 class="page-title">Today's <em>Menu</em></h1>
+        <p class="page-date">{{ today|date:"l, d F Y" }}</p>
+    </div>
+
+    {% if food_items %}
+
+        <!-- BREAKFAST -->
+        <div class="meal-section">
+            <div class="meal-label">
+                <span class="meal-emoji">🌅</span>
+                Breakfast
+            </div>
+            <div class="food-grid">
+                {% for item in food_items %}
+                {% if item.meal_type == 'breakfast' %}
+                <div class="food-card" data-votes="{{ item.vote_count }}" data-i="{{ forloop.counter0 }}">
+                    <div class="food-img-wrap">
+                        <img src="{% static 'mess/images/breakfast.jpg' %}"
+                             alt="{{ item.name }}" class="food-img">
+                    </div>
+                    <div class="card-accent"></div>
+                    <div class="food-body">
+                        <div class="food-name">{{ item.name }}</div>
+                        <div class="food-meta">Breakfast · {{ today|date:"d M" }}</div>
+                        <div class="vote-bar-wrap">
+                            <div class="vote-bar-track">
+                                <div class="vote-bar-fill"></div>
+                            </div>
+                            <div class="vote-count">
+                                <span class="vc-num">{{ item.vote_count }}</span> votes
+                            </div>
+                        </div>
+                        <form method="post" action="{% url 'vote_food' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class="vote-btn {% if item.voted %}voted{% endif %}">
+                                {% if item.voted %}✓ Voted{% else %}Vote for this{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- LUNCH -->
+        <div class="meal-section">
+            <div class="meal-label">
+                <span class="meal-emoji">☀️</span>
+                Lunch
+            </div>
+            <div class="food-grid">
+                {% for item in food_items %}
+                {% if item.meal_type == 'lunch' %}
+                <div class="food-card" data-votes="{{ item.vote_count }}" data-i="{{ forloop.counter0 }}">
+                    <div class="food-img-wrap">
+                        <img src="{% static 'mess/images/lunch.jpg' %}"
+                             alt="{{ item.name }}" class="food-img">
+                    </div>
+                    <div class="card-accent"></div>
+                    <div class="food-body">
+                        <div class="food-name">{{ item.name }}</div>
+                        <div class="food-meta">Lunch · {{ today|date:"d M" }}</div>
+                        <div class="vote-bar-wrap">
+                            <div class="vote-bar-track">
+                                <div class="vote-bar-fill"></div>
+                            </div>
+                            <div class="vote-count">
+                                <span class="vc-num">{{ item.vote_count }}</span> votes
+                            </div>
+                        </div>
+                        <form method="post" action="{% url 'vote_food' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class="vote-btn {% if item.voted %}voted{% endif %}">
+                                {% if item.voted %}✓ Voted{% else %}Vote for this{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- DINNER -->
+        <div class="meal-section">
+            <div class="meal-label">
+                <span class="meal-emoji">🌙</span>
+                Dinner
+            </div>
+            <div class="food-grid">
+                {% for item in food_items %}
+                {% if item.meal_type == 'dinner' %}
+                <div class="food-card" data-votes="{{ item.vote_count }}" data-i="{{ forloop.counter0 }}">
+                    <div class="food-img-wrap">
+                        <img src="{% static 'mess/images/dinner.jpg' %}"
+                             alt="{{ item.name }}" class="food-img">
+                    </div>
+                    <div class="card-accent"></div>
+                    <div class="food-body">
+                        <div class="food-name">{{ item.name }}</div>
+                        <div class="food-meta">Dinner · {{ today|date:"d M" }}</div>
+                        <div class="vote-bar-wrap">
+                            <div class="vote-bar-track">
+                                <div class="vote-bar-fill"></div>
+                            </div>
+                            <div class="vote-count">
+                                <span class="vc-num">{{ item.vote_count }}</span> votes
+                            </div>
+                        </div>
+                        <form method="post" action="{% url 'vote_food' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class="vote-btn {% if item.voted %}voted{% endif %}">
+                                {% if item.voted %}✓ Voted{% else %}Vote for this{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🍽️</div>
+        <p>No food items added for today.</p>
+        <p class="empty-sub">Check back later or contact the warden.</p>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'mess/js/script.js' %}"></script>
+</body>
+</html>

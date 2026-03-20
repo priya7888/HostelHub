@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>New Outing — HostelHub</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'outing/css/style.css' %}">
+</head>
+<body>
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <a href="{% url 'student_dashboard' %}" class="logo-text">Hostel<em>Hub</em></a>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'outing_list' %}" class="nav-back">← Back</a>
+    </div>
+</nav>
+<div class="page-wrap">
+    <div class="page-header">
+        <p class="page-eye">Outing Request</p>
+        <h1 class="page-title">New <em>Outing</em></h1>
+        <p class="page-sub">Fill in details. Parent approves first, then warden.</p>
+    </div>
+    <div class="flow-steps">
+        <div class="flow-step active">
+            <span class="step-num">1</span>
+            <span class="step-txt">You Submit</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <span class="step-num">2</span>
+            <span class="step-txt">Parent Approves</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <span class="step-num">3</span>
+            <span class="step-txt">Warden Approves</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <span class="step-num">4</span>
+            <span class="step-txt">QR Pass Generated</span>
+        </div>
+    </div>
+    <div class="form-card">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Destination</label>
+                    <input type="text" name="destination" class="form-input"
+                        placeholder="e.g. Home, City, Hospital" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Reason</label>
+                    <input type="text" name="reason" class="form-input"
+                        placeholder="e.g. Family visit, Medical appointment" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Out Date</label>
+                    <input type="date" name="out_date" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Out Time</label>
+                    <input type="time" name="out_time" class="form-input" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Return Date</label>
+                    <input type="date" name="return_date" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Return Time</label>
+                    <input type="time" name="return_time" class="form-input" required>
+                </div>
+            </div>
+            <div class="form-actions">
+                <a href="{% url 'outing_list' %}" class="cancel-btn">Cancel</a>
+                <button type="submit" class="submit-btn">Submit Request →</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="{% static 'outing/js/script.js' %}"></script>
+</body>
+</html>

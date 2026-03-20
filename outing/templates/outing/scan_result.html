@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Scan Result — HostelHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        [data-theme="dark"]{
+            --bg:#0d0d0d;--card-bg:#141414;
+            --text:#f5f2ed;--text2:#a09890;--text3:#5a5248;
+            --border:rgba(255,255,255,0.08);
+            --amber:#e8b96a;--green:#5cdb95;--red:#e05555;
+        }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{
+            background:var(--bg);color:var(--text);
+            font-family:'Outfit',sans-serif;
+            min-height:100vh;
+            display:flex;align-items:center;justify-content:center;
+            padding:20px;
+        }
+        .scan-card{
+            background:var(--card-bg);
+            border-radius:28px;padding:52px 40px;
+            max-width:480px;width:100%;
+            text-align:center;
+            box-shadow:0 8px 40px rgba(0,0,0,0.5);
+            animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+        @keyframes popIn{
+            from{opacity:0;transform:scale(0.85);}
+            to{opacity:1;transform:scale(1);}
+        }
+        .scan-icon{font-size:4.5rem;margin-bottom:20px;}
+        .scan-action{
+            font-family:'Playfair Display',serif;
+            font-size:2rem;font-weight:900;margin-bottom:10px;
+        }
+        .scan-action.valid{color:var(--green);}
+        .scan-action.invalid{color:var(--red);}
+        .scan-sub{font-size:0.92rem;color:var(--text2);margin-bottom:28px;line-height:1.6;}
+        .detail-box{
+            background:rgba(255,255,255,0.04);
+            border:1px solid var(--border);
+            border-radius:16px;padding:20px;
+            text-align:left;margin-bottom:24px;
+        }
+        .db-row{
+            display:flex;justify-content:space-between;
+            padding:8px 0;font-size:0.88rem;
+            border-bottom:1px solid var(--border);
+        }
+        .db-row:last-child{border-bottom:none;}
+        .db-label{color:var(--text3);}
+        .db-val{color:var(--text);font-weight:500;}
+        .scan-time{font-size:0.8rem;color:var(--text3);}
+        .valid-border{border:2px solid var(--green);}
+        .invalid-border{border:2px solid var(--red);}
+    </style>
+</head>
+<body>
+<div class="scan-card {% if valid %}valid-border{% else %}invalid-border{% endif %}">
+    {% if valid %}
+    <div class="scan-icon">✅</div>
+    <h2 class="scan-action valid">{{ action }}</h2>
+    <p class="scan-sub">
+        Student verified successfully.
+        {% if action == 'CHECKED OUT' %}Gate open — student may leave.
+        {% else %}Student has returned to hostel.{% endif %}
+    </p>
+    {% else %}
+    <div class="scan-icon">❌</div>
+    <h2 class="scan-action invalid">{{ action }}</h2>
+    <p class="scan-sub">This QR pass is not valid. Please contact the warden immediately.</p>
+    {% endif %}
+    {% if outing %}
+    <div class="detail-box">
+        <div class="db-row">
+            <span class="db-label">Student</span>
+            <span class="db-val">{{ outing.student.first_name|default:outing.student.username }}</span>
+        </div>
+        <div class="db-row">
+            <span class="db-label">Room</span>
+            <span class="db-val">{{ outing.student.last_name }}</span>
+        </div>
+        <div class="db-row">
+            <span class="db-label">Destination</span>
+            <span class="db-val">{{ outing.destination }}</span>
+        </div>
+        <div class="db-row">
+            <span class="db-label">Return By</span>
+            <span class="db-val">{{ outing.return_date|date:"d M Y" }} {{ outing.return_time|time:"H:i" }}</span>
+        </div>
+    </div>
+    {% endif %}
+    <p class="scan-time">Scanned at {% now "d M Y H:i" %}</p>
+</div>
+</body>
+</html>

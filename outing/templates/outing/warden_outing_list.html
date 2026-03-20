@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Warden — Outing Requests</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'outing/css/style.css' %}">
+</head>
+<body>
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em> — Warden</span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'logout' %}" class="nav-back">Sign Out →</a>
+    </div>
+</nav>
+<div class="page-wrap">
+    <div class="page-header">
+        <p class="page-eye">Warden Panel</p>
+        <h1 class="page-title">Outing <em>Requests</em></h1>
+        <p class="page-sub">Review parent-approved outing requests.</p>
+    </div>
+    {% if pending %}
+    <div class="outing-list">
+        {% for req in pending %}
+        <div class="outing-card" data-i="{{ forloop.counter0 }}">
+            <div class="oc-accent"></div>
+            <div class="oc-top">
+                <div class="oc-left">
+                    <span class="oc-destination">🚪 {{ req.destination }}</span>
+                    <span class="oc-student">
+                        👤 {{ req.student.first_name|default:req.student.username }}
+                        — Room {{ req.student.last_name }}
+                    </span>
+                    <span class="oc-date">
+                        {{ req.out_date|date:"d M Y" }} {{ req.out_time|time:"H:i" }}
+                        → {{ req.return_date|date:"d M Y" }} {{ req.return_time|time:"H:i" }}
+                    </span>
+                </div>
+                <span class="oc-status st-parent_approved">✅ Parent Approved</span>
+            </div>
+            <p class="oc-reason">{{ req.reason }}</p>
+            {% if req.parent_remarks %}
+            <p class="oc-parent-remark">Parent Note: {{ req.parent_remarks }}</p>
+            {% endif %}
+            <div class="oc-footer">
+                <span class="oc-created">Submitted {{ req.created_at|date:"d M Y" }}</span>
+                <a href="{% url 'warden_approve' req.id %}" class="review-btn">Review →</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">✅</div>
+        <p>No pending outing requests.</p>
+        <p class="empty-sub">All requests have been reviewed.</p>
+    </div>
+    {% endif %}
+</div>
+<script src="{% static 'outing/js/script.js' %}"></script>
+</body>
+</html>
+
+
+
+
+

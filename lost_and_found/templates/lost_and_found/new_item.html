@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Post Item — HostelHub</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'lost_and_found/css/style.css' %}">
+</head>
+<body>
+
+
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <a href="{% url 'student_dashboard' %}" class="logo-text">Hostel<em>Hub</em></a>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'lost_found' %}" class="nav-back">← Back</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Lost & Found</p>
+        <h1 class="page-title">Post an <em>Item</em></h1>
+        <p class="page-sub">Fill in the details to post a lost or found item.</p>
+    </div>
+
+    <div class="form-card">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Type</label>
+                <select name="item_type" class="form-input" required>
+                    <option value="">Select type</option>
+                    <option value="lost">Lost — I lost this item</option>
+                    <option value="found">Found — I found this item</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Item Name</label>
+                <input type="text" name="title" class="form-input"
+                    placeholder="e.g. Black wallet, Blue water bottle"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-input"
+                    rows="4"
+                    placeholder="Describe the item in detail..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Location</label>
+                <input type="text" name="location" class="form-input"
+                    placeholder="e.g. Mess hall, Room 204, Library"
+                    required>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'lost_found' %}" class="cancel-btn">Cancel</a>
+                <button type="submit" class="submit-btn">Post Item →</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script src="{% static 'lost_and_found/js/script.js' %}"></script>
+</body>
+</html>

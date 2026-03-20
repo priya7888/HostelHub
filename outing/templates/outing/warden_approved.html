@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Decision Recorded — HostelHub</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'outing/css/style.css' %}">
+</head>
+<body>
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em> — Warden</span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'warden_outing_list' %}" class="nav-back">← Back</a>
+    </div>
+</nav>
+<div class="page-wrap">
+    <div class="submit-card">
+        {% if rejected %}
+        <div class="submit-icon">❌</div>
+        <h3 class="submit-title" style="color:#e05555">Request Rejected</h3>
+        <p class="submit-sub">The outing request has been rejected.</p>
+        {% else %}
+        <div class="submit-icon">✅</div>
+        <h3 class="submit-title">Outing Approved!</h3>
+        <p class="submit-sub">
+            QR Pass generated for
+            <strong>{{ outing.student.first_name|default:outing.student.username }}</strong>
+            going to {{ outing.destination }}.
+        </p>
+        {% endif %}
+        {% if student_whatsapp %}
+        <div class="step-box">
+            <div class="step-num-big">Notify Student</div>
+            <h4 class="step-title">Send WhatsApp to Student</h4>
+            <p class="step-desc">Click to notify the student about your decision.</p>
+            <a href="{{ student_whatsapp }}" target="_blank" class="whatsapp-btn">
+                <span class="wa-icon">💬</span>
+                Send WhatsApp to Student
+            </a>
+        </div>
+        {% endif %}
+        <a href="{% url 'warden_outing_list' %}" class="back-btn">
+            Back to Requests →
+        </a>
+    </div>
+</div>
+<script src="{% static 'outing/js/script.js' %}"></script>
+</body>
+</html>
+
+
+
+
+
+

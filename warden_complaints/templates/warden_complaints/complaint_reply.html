@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Reply — Warden</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'warden_complaints/css/style.css' %}">
+</head>
+<body>
+
+
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em></span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'warden_complaints' %}" class="nav-back">← Back</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Respond</p>
+        <h1 class="page-title">Reply to <em>Complaint</em></h1>
+    </div>
+
+    <!-- COMPLAINT DETAILS -->
+    <div class="detail-card">
+        <div class="detail-row">
+            <span class="dl">Student</span>
+            <span class="dv">
+                {{ complaint.student.first_name|default:complaint.student.username }}
+                — Room {{ complaint.student.last_name }}
+            </span>
+        </div>
+        <div class="detail-row">
+            <span class="dl">Title</span>
+            <span class="dv">{{ complaint.title }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="dl">Category</span>
+            <span class="dv">{{ complaint.category }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="dl">Description</span>
+            <span class="dv">{{ complaint.description }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="dl">Submitted</span>
+            <span class="dv">{{ complaint.created_at|date:"d M Y" }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="dl">Current Status</span>
+            <span class="dv">
+                <span class="cs-{{ complaint.status }} status-badge-inline">
+                    {% if complaint.status == 'pending' %}⏳ Pending
+                    {% elif complaint.status == 'ongoing' %}🔄 Ongoing
+                    {% else %}✅ Completed{% endif %}
+                </span>
+            </span>
+        </div>
+    </div>
+
+    <!-- REPLY FORM -->
+    <div class="form-card">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Update Status</label>
+                <div class="status-options">
+                    <label class="status-opt">
+                        <input type="radio" name="status" value="pending"
+                            {% if complaint.status == 'pending' %}checked{% endif %}>
+                        <span class="opt-label opt-pending">⏳ Pending</span>
+                    </label>
+                    <label class="status-opt">
+                        <input type="radio" name="status" value="ongoing"
+                            {% if complaint.status == 'ongoing' %}checked{% endif %}>
+                        <span class="opt-label opt-ongoing">🔄 Ongoing</span>
+                    </label>
+                    <label class="status-opt">
+                        <input type="radio" name="status" value="completed"
+                            {% if complaint.status == 'completed' %}checked{% endif %}>
+                        <span class="opt-label opt-done">✅ Completed</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Your Reply</label>
+                <textarea name="admin_reply" class="form-input" rows="5"
+                    placeholder="Write your response to the student...">{{ complaint.admin_reply }}</textarea>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'warden_complaints' %}" class="cancel-btn">Cancel</a>
+                <button type="submit" class="submit-btn">Save Response →</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script src="{% static 'warden_complaints/js/script.js' %}"></script>
+</body>
+</html>
+
+
+
+
+

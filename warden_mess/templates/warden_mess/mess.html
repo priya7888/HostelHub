@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Mess — Warden</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'warden_mess/css/style.css' %}">
+</head>
+<body>
+
+
+
+{% if messages %}
+<div class="messages-wrap">
+    {% for message in messages %}
+    <div class="msg">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em></span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'warden_dash' %}" class="nav-back">← Dashboard</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Mess Management</p>
+        <h1 class="page-title">Food <em>Votes</em></h1>
+        <p class="page-sub">
+            Today: {{ today|date:"d M Y" }} —
+            {{ total_votes }} total vote{{ total_votes|pluralize }} today.
+        </p>
+    </div>
+
+    <!-- ADD FOOD ITEM FORM -->
+    <div class="add-card">
+        <h3 class="add-title">➕ Add Food Item</h3>
+        <form method="post" class="add-form">
+            {% csrf_token %}
+            <div class="add-row">
+                <div class="form-group">
+                    <label class="form-label">Item Name</label>
+                    <input type="text" name="name" class="form-input"
+                        placeholder="e.g. Idli, Rice, Chapati" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Meal Type</label>
+                    <select name="meal_type" class="form-input" required>
+                        <option value="breakfast">🌅 Breakfast</option>
+                        <option value="lunch">☀️ Lunch</option>
+                        <option value="dinner">🌙 Dinner</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" name="date" class="form-input"
+                        value="{{ today|date:'Y-m-d' }}">
+                </div>
+                <div class="form-group form-btn-group">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="add-btn">Add Item →</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- FOOD ITEMS WITH VOTES -->
+    {% if food_items %}
+        {% regroup food_items by meal_type as meal_groups %}
+        {% for group in meal_groups %}
+
+        <div class="meal-section">
+            <div class="meal-header">
+                <span class="meal-icon">
+                    {% if group.grouper == 'breakfast' %}🌅
+                    {% elif group.grouper == 'lunch' %}☀️
+                    {% else %}🌙{% endif %}
+                </span>
+                <h2 class="meal-title">
+                    {{ group.grouper|capfirst }}
+                </h2>
+                <span class="meal-count">
+                    {{ group.list|length }} item{{ group.list|length|pluralize }}
+                </span>
+            </div>
+
+            <div class="vote-grid">
+                {% for item in group.list %}
+                <div class="vote-card" data-i="{{ forloop.counter0 }}">
+                    <div class="vc-accent"></div>
+                    <div class="vc-top">
+                        <h3 class="vc-name">{{ item.name }}</h3>
+                        <span class="vc-count">
+                            {{ item.vote_count }}
+                            vote{{ item.vote_count|pluralize }}
+                        </span>
+                    </div>
+                    <!-- VOTE BAR -->
+                    <div class="vc-bar-wrap">
+    <div class="vc-bar">
+        <div class="vc-fill"
+             style="width: 0%"
+             data-votes="{{ item.vote_count }}">
+        </div>
+    </div>
+    <span class="vc-pct">{{ item.vote_count }} / 20</span>
+</div>
+                    <!-- DELETE -->
+                    <div class="vc-footer">
+                        <span class="vc-date">{{ item.date|date:"d M Y" }}</span>
+                        <form method="post"
+                              action="{% url 'warden_delete_food' item.id %}"
+                              style="display:inline">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-btn"
+                                onclick="return confirm('Delete {{ item.name }}?')">
+                                🗑 Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% endfor %}
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🍽️</div>
+        <p>No food items for today.</p>
+        <p class="empty-sub">Add food items using the form above.</p>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'warden_mess/js/script.js' %}"></script>
+</body>
+</html>
+
+
+
+
+

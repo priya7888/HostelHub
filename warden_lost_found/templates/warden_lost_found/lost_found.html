@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Lost & Found — Warden</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'warden_lost_found/css/style.css' %}">
+</head>
+<body>
+
+
+
+{% if messages %}
+<div class="messages-wrap">
+    {% for message in messages %}
+    <div class="msg">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em></span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'warden_dash' %}" class="nav-back">← Dashboard</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Lost & Found</p>
+        <h1 class="page-title">Items <em>Board</em></h1>
+        <p class="page-sub">View all lost and found items. Mark as resolved when item is returned.</p>
+    </div>
+
+    <!-- COUNTS + FILTER -->
+    <div class="top-bar">
+        <div class="filter-tabs">
+            <a href="?type=all"
+               class="filter-tab {% if filter_type == 'all' %}active{% endif %}">
+                All Items
+            </a>
+            <a href="?type=lost"
+               class="filter-tab {% if filter_type == 'lost' %}active{% endif %}">
+                🔍 Lost ({{ lost_count }})
+            </a>
+            <a href="?type=found"
+               class="filter-tab {% if filter_type == 'found' %}active{% endif %}">
+                ✅ Found ({{ found_count }})
+            </a>
+        </div>
+    </div>
+
+    <!-- ACTIVE ITEMS -->
+    {% if items %}
+    <div class="items-grid">
+        {% for item in items %}
+        <div class="item-card card-{{ item.item_type }}" data-i="{{ forloop.counter0 }}">
+            <div class="ic-accent"></div>
+
+            <div class="ic-top">
+                <span class="ic-type type-{{ item.item_type }}">
+                    {% if item.item_type == 'lost' %}🔍 Lost{% else %}✅ Found{% endif %}
+                </span>
+                <span class="ic-date">{{ item.posted_at|date:"d M Y" }}</span>
+            </div>
+
+            <h3 class="ic-title">{{ item.title }}</h3>
+            <p class="ic-desc">{{ item.description|truncatechars:100 }}</p>
+
+            <div class="ic-meta">
+                <span class="ic-loc">📍 {{ item.location }}</span>
+                <span class="ic-by">
+                    {{ item.posted_by.first_name|default:item.posted_by.username }}
+                </span>
+            </div>
+
+            <div class="ic-footer">
+                <form method="post" style="width:100%">
+                    {% csrf_token %}
+                    <input type="hidden" name="item_id" value="{{ item.id }}">
+                    <button type="submit" class="resolve-btn">
+                        ✅ Mark as Resolved
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <p>No active items found.</p>
+        <p class="empty-sub">All items have been resolved.</p>
+    </div>
+    {% endif %}
+
+    <!-- RECENTLY RESOLVED -->
+    {% if resolved %}
+    <div class="resolved-section">
+        <h3 class="resolved-title">Recently Resolved</h3>
+        <div class="resolved-list">
+            {% for item in resolved %}
+            <div class="resolved-row" data-i="{{ forloop.counter0 }}">
+                <span class="rr-type type-{{ item.item_type }}">
+                    {% if item.item_type == 'lost' %}🔍{% else %}✅{% endif %}
+                </span>
+                <span class="rr-title">{{ item.title }}</span>
+                <span class="rr-by">{{ item.posted_by.first_name|default:item.posted_by.username }}</span>
+                <span class="rr-date">{{ item.posted_at|date:"d M" }}</span>
+                <span class="rr-badge">Resolved</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'warden_lost_found/js/script.js' %}"></script>
+</body>
+</html>
+
+
+
+
+

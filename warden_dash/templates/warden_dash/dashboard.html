@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Warden Dashboard — HostelHub</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'warden_dash/css/style.css' %}">
+</head>
+<body>
+
+{% if messages %}
+<div class="messages-wrap">
+    {% for message in messages %}
+    <div class="msg">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em></span>
+    </div>
+    <div class="nav-mid">
+        <span class="nav-tag">Warden Portal</span>
+        <span class="nav-sep">·</span>
+        <span class="nav-tag">2024–25</span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span class="theme-icon" id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span class="theme-label" id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'logout' %}" class="nav-exit">Sign Out →</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Warden Panel</p>
+        <h1 class="page-title">
+            Hello, <em>{{ request.user.first_name|default:request.user.username }}</em>
+        </h1>
+        <p class="page-sub">What would you like to manage today?</p>
+    </div>
+<!-- QR SCANNER SHORTCUT -->
+<div class="scanner-shortcut">
+    <div>
+        <h3 style="font-family:'Playfair Display',serif;
+                   font-size:1.1rem;color:var(--text);
+                   margin-bottom:4px;font-weight:700;">
+            📷 Gate QR Scanner
+        </h3>
+        <p class="scanner-shortcut-sub">
+            Scan student passes at gate — only your students processed
+        </p>
+    </div>
+    <a href="{% url 'warden_qr_scanner' %}" class="scanner-shortcut-btn">
+        Open Scanner →
+    </a>
+</div>
+
+    <!-- 7 CARDS -->
+    <div class="cards-grid">
+
+        <!-- 1 Mess -->
+        <a href="{% url 'warden_mess' %}" class="svc-card" data-i="0">
+            <div class="card-accent"></div>
+            <div class="card-header">
+                <div class="card-icon-wrap">
+                    <span class="card-icon">🍽️</span>
+                </div>
+                <span class="card-num">01</span>
+            </div>
+            <h3 class="card-title">Mess & Food</h3>
+            <p class="card-desc">View student food votes and manage today's menu items.</p>
+            <div class="card-footer">
+                <span class="card-cta">Manage</span>
+                <span class="card-arrow">→</span>
+            </div>
+        </a>
+
+        <!-- 2 Complaints -->
+        <a href="{% url 'warden_complaints' %}" class="svc-card" data-i="1">
+            <div class="card-accent"></div>
+            <div class="card-header">
+                <div class="card-icon-wrap">
+                    <span class="card-icon">📝</span>
+                </div>
+                <span class="card-num">02</span>
+            </div>
+            <h3 class="card-title">Complaints</h3>
+            <p class="card-desc">Review student complaints. Update status to ongoing or completed.</p>
+            <div class="card-footer">
+                <span class="card-cta">
+                    {% if pending_complaints > 0 %}
+                        {{ pending_complaints }} Pending
+                    {% else %}
+                        View All
+                    {% endif %}
+                </span>
+                <span class="card-arrow">→</span>
+            </div>
+        </a>
+
+        <!-- 3 Lost & Found -->
+        <a href="{% url 'warden_lost_found' %}" class="svc-card" data-i="2">
+            <div class="card-accent"></div>
+            <div class="card-header">
+                <div class="card-icon-wrap">
+                    <span class="card-icon">🔍</span>
+                </div>
+                <span class="card-num">03</span>
+            </div>
+            <h3 class="card-title">Lost & Found</h3>
+            <p class="card-desc">View all lost and found items posted by students.</p>
+            <div class="card-footer">
+                <span class="card-cta">View Items</span>
+                <span class="card-arrow">→</span>
+            </div>
+        </a>
+
+        <!-- 4 Notices -->
+        <a href="{% url 'warden_notices' %}" class="svc-card" data-i="3">
+            <div class="card-accent"></div>
+            <div class="card-header">
+                <div class="card-icon-wrap">
+                    <span class="card-icon">📢</span>
+                </div>
+                <span class="card-num">04</span>
+            </div>
+            <h3 class="card-title">Notice Board</h3>
+            <p class="card-desc">Post and manage hostel notices visible to all students.</p>
+            <div class="card-footer">
+                <span class="card-cta">Post Notice</span>
+                <span class="card-arrow">→</span>
+            </div>
+        </a>
+
+        <!-- 5 Attendance -->
+        <a href="{% url 'warden_attendance' %}" class="svc-card" data-i="4">
+            <div class="card-accent"></div>
+            <div class="card-header">
+                <div class="card-icon-wrap">
+                    <span class="card-icon">🌙</span>
+                </div>
+                <span class="card-num">05</span>
+            </div>
+            <h3 class="card-title">Night Attendance</h3>
+            <p class="card-desc">Mark attendance for your students. Students on leave shown separately.</p>
+            <div class="card-footer">
+                <span class="card-cta">Mark Now</span>
+                <span class="card-arrow">→</span>
+            </div>
+        </a>
+
+        <!-- 6 Outings -->
+        <a href="{% url 'warden_outings' %}" class="svc-card" data-i="5">
+            <div class="card-accent"></div>
+            <div class="card-header">
+                <div class="card-icon-wrap">
+                    <span class="card-icon">🚪</span>
+                </div>
+                <span class="card-num">06</span>
+            </div>
+            <h3 class="card-title">Outing Requests</h3>
+            <p class="card-desc">Approve parent-approved outing requests and generate QR passes.</p>
+            <div class="card-footer">
+                <span class="card-cta">
+                    {% if pending_outings > 0 %}
+                        {{ pending_outings }} Pending
+                    {% else %}
+                        View All
+                    {% endif %}
+                </span>
+                <span class="card-arrow">→</span>
+            </div>
+        </a>
+
+        <!-- 7 SOS full width -->
+        <a href="{% url 'warden_sos' %}" class="svc-card svc-sos" data-i="6">
+            <div class="card-accent sos-accent"></div>
+            <div class="card-header">
+                <div class="card-icon-wrap sos-icon-wrap">
+                    <span class="card-icon">🚨</span>
+                    <span class="sos-ping"></span>
+                </div>
+                <span class="card-num sos-num">07</span>
+            </div>
+            <div class="card-body-row">
+                <h3 class="card-title">Emergency SOS Alerts</h3>
+                <p class="card-desc">
+                    View and respond to emergency alerts from your students.
+                    {% if pending_sos > 0 %}
+                    <strong style="color:#e05555">
+                        {{ pending_sos }} active alert{{ pending_sos|pluralize }}!
+                    </strong>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="card-footer">
+                <span class="card-cta sos-cta">
+                    {% if pending_sos > 0 %}Respond Now{% else %}View Alerts{% endif %}
+                </span>
+                <span class="card-arrow sos-arrow">→</span>
+            </div>
+        </a>
+
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="foot-left">
+        <span class="logo-dot" style="width:7px;height:7px;"></span>
+        Hostel<em style="font-style:normal;color:var(--amber)">Hub</em>
+        · Warden Portal
+    </div>
+    <a href="{% url 'warden_home' %}" class="foot-logout">← Home</a>
+</footer>
+
+<script src="{% static 'warden_dash/js/script.js' %}"></script>
+</body>
+</html>

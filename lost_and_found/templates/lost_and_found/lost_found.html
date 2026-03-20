@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Lost & Found — HostelHub</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'lost_and_found/css/style.css' %}">
+</head>
+<body>
+
+
+
+{% if messages %}
+<div class="messages-wrap">
+    {% for message in messages %}
+    <div class="msg">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <a href="{% url 'student_dashboard' %}" class="logo-text">Hostel<em>Hub</em></a>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'dashboard' %}" class="nav-back">← Dashboard</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Lost & Found</p>
+        <h1 class="page-title">Find your <em>belongings.</em></h1>
+        <p class="page-sub">Browse lost and found items across the hostel.</p>
+    </div>
+
+    <div class="top-bar">
+        <!-- Filter tabs -->
+        <div class="filter-tabs">
+            <a href="?type=all"
+               class="filter-tab {% if filter_type == 'all' %}active{% endif %}">
+                All Items
+            </a>
+            <a href="?type=lost"
+               class="filter-tab {% if filter_type == 'lost' %}active{% endif %}">
+                Lost
+            </a>
+            <a href="?type=found"
+               class="filter-tab {% if filter_type == 'found' %}active{% endif %}">
+                Found
+            </a>
+        </div>
+        <a href="{% url 'new_item' %}" class="new-btn">+ Post Item</a>
+    </div>
+
+    {% if items %}
+    <div class="items-grid">
+        {% for item in items %}
+        <div class="item-card {% if item.item_type == 'lost' %}card-lost{% else %}card-found{% endif %}"
+             data-i="{{ forloop.counter0 }}">
+            <div class="card-accent"></div>
+            <div class="item-top">
+                <span class="item-type type-{{ item.item_type }}">
+                    {% if item.item_type == 'lost' %}🔍 Lost{% else %}✅ Found{% endif %}
+                </span>
+                <span class="item-date">{{ item.posted_at|date:"d M Y" }}</span>
+            </div>
+            <h3 class="item-title">{{ item.title }}</h3>
+            <p class="item-desc">{{ item.description|truncatechars:100 }}</p>
+            <div class="item-footer">
+                <div class="item-location">
+                    <span class="loc-icon">📍</span>
+                    {{ item.location }}
+                </div>
+                <span class="item-by">{{ item.posted_by.first_name|default:item.posted_by.username }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <p>No items found.</p>
+        <p class="empty-sub">Post a lost or found item using the button above.</p>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'lost_and_found/js/script.js' %}"></script>
+</body>
+</html>

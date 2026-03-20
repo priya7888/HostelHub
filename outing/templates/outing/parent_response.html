@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Response Recorded — HostelHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        [data-theme="dark"]{
+            --bg:#0d0d0d;--card-bg:#141414;
+            --text:#f5f2ed;--text2:#a09890;--text3:#5a5248;
+            --border:rgba(255,255,255,0.08);
+            --amber:#e8b96a;--green:#5cdb95;--red:#e05555;
+        }
+        *{box-sizing:border-box;margin:0;padding:0;}
+        body{
+            background:var(--bg);color:var(--text);
+            font-family:'Outfit',sans-serif;
+            min-height:100vh;
+            display:flex;align-items:center;justify-content:center;
+            padding:20px;
+        }
+        .response-card{
+            background:var(--card-bg);
+            border:1px solid var(--border);
+            border-radius:24px;padding:48px 40px;
+            max-width:480px;width:100%;
+            text-align:center;
+            box-shadow:0 8px 40px rgba(0,0,0,0.5);
+        }
+        .resp-icon{font-size:3.5rem;margin-bottom:20px;}
+        .resp-title{
+            font-family:'Playfair Display',serif;
+            font-size:1.6rem;font-weight:900;margin-bottom:10px;
+        }
+        .resp-sub{font-size:0.9rem;color:var(--text3);line-height:1.6;margin-bottom:28px;}
+        .wa-notify-btn{
+            display:inline-flex;align-items:center;gap:10px;
+            background:#25d366;color:#fff;
+            font-size:0.92rem;font-weight:700;
+            padding:13px 28px;border-radius:100px;
+            text-decoration:none;
+            box-shadow:0 4px 20px rgba(37,211,102,0.3);
+            transition:all 0.3s;
+        }
+        .wa-notify-btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 8px 28px rgba(37,211,102,0.45);
+            color:#fff;
+        }
+        .wa-note{
+            font-size:0.78rem;color:var(--text3);
+            margin-top:16px;
+        }
+    </style>
+</head>
+<body>
+<div class="response-card">
+    {% if approved %}
+    <div class="resp-icon">✅</div>
+    <h2 class="resp-title" style="color:#5cdb95">Request Approved</h2>
+    <p class="resp-sub">
+        You have approved the outing request for
+        <strong>{{ outing.student.first_name|default:outing.student.username }}</strong>.
+        The warden will review it next.
+    </p>
+    {% if warden_whatsapp %}
+    <a href="{{ warden_whatsapp }}" target="_blank" class="wa-notify-btn">
+        💬 Notify Warden via WhatsApp
+    </a>
+    <p class="wa-note">Click to send a WhatsApp message to the warden for faster approval.</p>
+    {% endif %}
+    {% else %}
+    <div class="resp-icon">❌</div>
+    <h2 class="resp-title" style="color:#e05555">Request Rejected</h2>
+    <p class="resp-sub">
+        You have rejected the outing request for
+        <strong>{{ outing.student.first_name|default:outing.student.username }}</strong>.
+        The hostel has been notified.
+    </p>
+    {% endif %}
+</div>
+</body>
+</html>

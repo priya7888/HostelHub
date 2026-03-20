@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Night Attendance — HostelHub</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'night_attendance/css/style.css' %}">
+</head>
+<body>
+
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <a href="{% url 'student_dashboard' %}" class="logo-text">Hostel<em>Hub</em></a>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'dashboard' %}" class="nav-back">← Dashboard</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Night Attendance</p>
+        <h1 class="page-title">Your <em>Attendance</em></h1>
+        <p class="page-sub">Last 30 days attendance record.</p>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+
+        <div class="stat-card" data-i="0">
+            <div class="stat-icon">📊</div>
+            <div class="stat-info">
+                <span class="stat-val" id="pctVal">0%</span>
+                <span class="stat-lbl">Attendance</span>
+            </div>
+            <div class="stat-bar-wrap">
+                <div class="stat-bar">
+                    <div class="stat-fill"
+                         id="statFill"
+                         data-pct="{{ percentage }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card" data-i="1">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+                <span class="stat-val stat-green">{{ present }}</span>
+                <span class="stat-lbl">Present</span>
+            </div>
+        </div>
+
+        <div class="stat-card" data-i="2">
+            <div class="stat-icon">❌</div>
+            <div class="stat-info">
+                <span class="stat-val stat-red">{{ absent }}</span>
+                <span class="stat-lbl">Absent</span>
+            </div>
+        </div>
+
+        <div class="stat-card" data-i="3">
+            <div class="stat-icon">🏖️</div>
+            <div class="stat-info">
+                <span class="stat-val stat-amber">{{ leave }}</span>
+                <span class="stat-lbl">On Leave</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TODAY STATUS -->
+    <div class="today-card">
+        <div class="today-left">
+            <span class="today-label">Tonight's Status</span>
+            <span class="today-date">{{ request.user.first_name|default:request.user.username }} · Today</span>
+        </div>
+        <div class="today-right">
+            {% if today_record %}
+                <span class="today-status status-{{ today_record.status }}">
+                    {% if today_record.status == 'present' %}✅ Present
+                    {% elif today_record.status == 'absent' %}❌ Absent
+                    {% else %}🏖️ On Leave{% endif %}
+                </span>
+                {% if today_record.remarks %}
+                <span class="today-remark">{{ today_record.remarks }}</span>
+                {% endif %}
+            {% else %}
+                <span class="today-status status-pending">⏳ Not Marked Yet</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ATTENDANCE TABLE -->
+    {% if records %}
+    <div class="att-table-wrap">
+        <div class="att-table-header">
+            <span>Date</span>
+            <span>Day</span>
+            <span>Status</span>
+            <span>Remarks</span>
+        </div>
+        {% for record in records %}
+        <div class="att-row status-row-{{ record.status }}"
+             data-i="{{ forloop.counter0 }}">
+            <span class="att-date">{{ record.date|date:"d M Y" }}</span>
+            <span class="att-day">{{ record.date|date:"l" }}</span>
+            <span class="att-status">
+                <span class="status-badge s-{{ record.status }}">
+                    {% if record.status == 'present' %}✅ Present
+                    {% elif record.status == 'absent' %}❌ Absent
+                    {% else %}🏖️ On Leave{% endif %}
+                </span>
+            </span>
+            <span class="att-remark">
+                {{ record.remarks|default:"—" }}
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🌙</div>
+        <p>No attendance records found.</p>
+        <p class="empty-sub">Records will appear once marked by the warden.</p>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'night_attendance/js/script.js' %}"></script>
+</body>
+</html>

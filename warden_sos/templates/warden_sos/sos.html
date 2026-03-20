@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>SOS Alerts — Warden</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'warden_sos/css/style.css' %}">
+</head>
+<body>
+
+
+
+{% if messages %}
+<div class="messages-wrap">
+    {% for message in messages %}
+    <div class="msg">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot logo-red"></span>
+        <span class="logo-text">Hostel<em>Hub</em></span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'warden_dash' %}" class="nav-back">← Dashboard</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye page-eye-red">Emergency SOS</p>
+        <h1 class="page-title">SOS <em>Alerts</em></h1>
+        <p class="page-sub">
+            Respond to emergency alerts from your students.
+            {% if active_count > 0 %}
+            <strong style="color:#e05555">
+                {{ active_count }} active alert{{ active_count|pluralize }}!
+            </strong>
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- ACTIVE ALERTS -->
+    {% if alerts_with_wa %}
+    <div class="section-label section-red">
+        🚨 Active Alerts — Requires Immediate Attention
+    </div>
+
+    <div class="alert-list">
+        {% for item in alerts_with_wa %}
+        <div class="alert-card card-active" data-i="{{ forloop.counter0 }}">
+            <div class="ac-ping"></div>
+            <div class="ac-top">
+                <div class="ac-left">
+                    <span class="ac-student">
+                        🚨 {{ item.alert.student.first_name|default:item.alert.student.username }}
+                        — Room {{ item.alert.student.last_name }}
+                    </span>
+                    <h3 class="ac-msg">{{ item.alert.message }}</h3>
+                    {% if item.alert.location %}
+                    <span class="ac-loc">
+                        📍 {{ item.alert.location }}
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="ac-right">
+                    <span class="ac-time">
+                        {{ item.alert.sent_at|date:"d M H:i" }}
+                    </span>
+                    <span class="ac-status-badge status-sent">
+                        🚨 ACTIVE
+                    </span>
+                </div>
+            </div>
+
+            <div class="ac-actions">
+                <!-- WhatsApp reply -->
+                {% if item.wa_url %}
+                <a href="{{ item.wa_url }}" target="_blank"
+                   class="wa-reply-btn">
+                    💬 Reply via WhatsApp
+                </a>
+                {% endif %}
+
+                <!-- Acknowledge -->
+                <a href="{% url 'warden_ack_sos' item.alert.id %}"
+                   class="ack-btn">
+                    🔔 Acknowledge
+                </a>
+
+                <!-- Resolve -->
+                <form method="post" style="display:inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="alert_id"
+                           value="{{ item.alert.id }}">
+                    <button type="submit" class="resolve-btn"
+                        onclick="return confirm('Mark as resolved?')">
+                        ✅ Resolved
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="no-alerts">
+        <div class="no-alerts-icon">✅</div>
+        <p>No active SOS alerts.</p>
+        <p class="no-alerts-sub">All students are safe.</p>
+    </div>
+    {% endif %}
+
+    <!-- ACKNOWLEDGED -->
+    {% if acknowledged %}
+    <div class="section-label section-amber">
+        🔔 Acknowledged — Being Handled
+    </div>
+    <div class="alert-list">
+        {% for alert in acknowledged %}
+        <div class="alert-card card-ack" data-i="{{ forloop.counter0 }}">
+            <div class="ac-top">
+                <div class="ac-left">
+                    <span class="ac-student">
+                        👤 {{ alert.student.first_name|default:alert.student.username }}
+                        — Room {{ alert.student.last_name }}
+                    </span>
+                    <h3 class="ac-msg">{{ alert.message }}</h3>
+                    {% if alert.location %}
+                    <span class="ac-loc">📍 {{ alert.location }}</span>
+                    {% endif %}
+                </div>
+                <div class="ac-right">
+                    <span class="ac-time">{{ alert.sent_at|date:"d M H:i" }}</span>
+                    <span class="ac-status-badge status-ack">🔔 Acknowledged</span>
+                </div>
+            </div>
+            <div class="ac-actions">
+                <form method="post" style="display:inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="alert_id" value="{{ alert.id }}">
+                    <button type="submit" class="resolve-btn"
+                        onclick="return confirm('Mark as resolved?')">
+                        ✅ Mark Resolved
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- RESOLVED -->
+    {% if resolved %}
+    <div class="section-label section-green">
+        ✅ Recently Resolved
+    </div>
+    <div class="resolved-table-wrap">
+        <div class="rt-header">
+            <span>Student</span>
+            <span>Message</span>
+            <span>Location</span>
+            <span>Time</span>
+        </div>
+        {% for alert in resolved %}
+        <div class="rt-row" data-i="{{ forloop.counter0 }}">
+            <span class="rt-student">
+                {{ alert.student.first_name|default:alert.student.username }}
+                <span class="rt-room">Rm {{ alert.student.last_name }}</span>
+            </span>
+            <span class="rt-msg">{{ alert.message|truncatechars:50 }}</span>
+            <span class="rt-loc">{{ alert.location|default:"—" }}</span>
+            <span class="rt-time">{{ alert.sent_at|date:"d M H:i" }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'warden_sos/js/script.js' %}"></script>
+</body>
+</html>
+
+
+
+
+

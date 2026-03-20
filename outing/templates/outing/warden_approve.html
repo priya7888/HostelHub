@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Approve Outing — HostelHub</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'outing/css/style.css' %}">
+</head>
+<body>
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em> — Warden</span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'warden_outing_list' %}" class="nav-back">← Back</a>
+    </div>
+</nav>
+<div class="page-wrap">
+    <div class="page-header">
+        <p class="page-eye">Review Request</p>
+        <h1 class="page-title">Approve <em>Outing</em></h1>
+    </div>
+    <div class="detail-card">
+        <div class="detail-row">
+            <span class="dl">Student</span>
+            <span class="dv">{{ outing.student.first_name|default:outing.student.username }} — Room {{ outing.student.last_name }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="dl">Destination</span>
+            <span class="dv">{{ outing.destination }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="dl">Reason</span>
+            <span class="dv">{{ outing.reason }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="dl">Going Out</span>
+            <span class="dv">{{ outing.out_date|date:"d M Y" }} at {{ outing.out_time|time:"H:i" }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="dl">Returning</span>
+            <span class="dv">{{ outing.return_date|date:"d M Y" }} at {{ outing.return_time|time:"H:i" }}</span>
+        </div>
+        {% if outing.parent_remarks %}
+        <div class="detail-row">
+            <span class="dl">Parent Note</span>
+            <span class="dv">{{ outing.parent_remarks }}</span>
+        </div>
+        {% endif %}
+    </div>
+    <div class="form-card">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">Warden Remarks (optional)</label>
+                <textarea name="remarks" class="form-input" rows="3"
+                    placeholder="Add any remarks..."></textarea>
+            </div>
+            <div class="btn-row">
+                <button type="submit" name="action" value="approve" class="approve-btn">
+                    ✅ Approve & Generate QR
+                </button>
+                <button type="submit" name="action" value="reject" class="reject-btn">
+                    ❌ Reject
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="{% static 'outing/js/script.js' %}"></script>
+</body>
+</html>
+
+
+
+
+

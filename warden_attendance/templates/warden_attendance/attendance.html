@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Attendance — Warden</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'warden_attendance/css/style.css' %}">
+</head>
+<body>
+
+
+
+{% if messages %}
+<div class="messages-wrap">
+    {% for message in messages %}
+    <div class="msg">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em></span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'warden_dash' %}" class="nav-back">← Dashboard</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Night Attendance</p>
+        <h1 class="page-title">Mark <em>Attendance</em></h1>
+        <p class="page-sub">Today: {{ today|date:"l, d M Y" }}</p>
+    </div>
+
+    <!-- SUMMARY STATS -->
+    <div class="stats-row">
+        <div class="stat-card" data-i="0">
+            <span class="stat-icon">👥</span>
+            <div class="stat-info">
+                <span class="stat-val">{{ total }}</span>
+                <span class="stat-lbl">Total</span>
+            </div>
+        </div>
+        <div class="stat-card" data-i="1">
+            <span class="stat-icon">✅</span>
+            <div class="stat-info">
+                <span class="stat-val" style="color:#5cdb95">{{ present_count }}</span>
+                <span class="stat-lbl">Present</span>
+            </div>
+        </div>
+        <div class="stat-card" data-i="2">
+            <span class="stat-icon">❌</span>
+            <div class="stat-info">
+                <span class="stat-val" style="color:#e05555">{{ absent_count }}</span>
+                <span class="stat-lbl">Absent</span>
+            </div>
+        </div>
+        <div class="stat-card" data-i="3">
+            <span class="stat-icon">🏖️</span>
+            <div class="stat-info">
+                <span class="stat-val" style="color:var(--amber)">{{ leave_count }}</span>
+                <span class="stat-lbl">On Leave</span>
+            </div>
+        </div>
+        <div class="stat-card" data-i="4">
+            <span class="stat-icon">⏳</span>
+            <div class="stat-info">
+                <span class="stat-val" style="color:var(--text3)">{{ unmarked_count }}</span>
+                <span class="stat-lbl">Unmarked</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MARK ALL QUICK ACTION -->
+    <div class="quick-mark-card">
+        <h3 class="qm-title">⚡ Quick Mark All</h3>
+        <p class="qm-sub">Mark all students at once for today.</p>
+        <form method="post" action="{% url 'warden_mark_all' %}" class="qm-form">
+            {% csrf_token %}
+            <div class="qm-row">
+                <select name="status" class="qm-select">
+                    <option value="present">✅ Present</option>
+                    <option value="absent">❌ Absent</option>
+                    <option value="on_leave">🏖️ On Leave</option>
+                </select>
+                <input type="text" name="remarks" class="qm-input"
+                    placeholder="Remarks (optional)">
+                <button type="submit" class="qm-btn"
+                    onclick="return confirm('Mark ALL students?')">
+                    Mark All
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ON LEAVE SECTION -->
+    {% if on_leave %}
+    <div class="leave-section">
+        <h3 class="leave-title">🏖️ On Leave Today</h3>
+        <div class="leave-pills">
+            {% for record in on_leave %}
+            <div class="leave-pill">
+                <span class="lp-name">
+                    {{ record.student.first_name|default:record.student.username }}
+                </span>
+                {% if record.remarks %}
+                <span class="lp-remark">— {{ record.remarks }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ATTENDANCE TABLE -->
+    {% if attendance_data %}
+    <div class="att-wrap">
+
+        <div class="att-header">
+            <span>Student</span>
+            <span>Room</span>
+            <span>Status</span>
+            <span>Mark</span>
+        </div>
+
+        {% for row in attendance_data %}
+        <div class="att-row {% if row.record %}marked{% endif %}"
+             data-i="{{ forloop.counter0 }}">
+
+            <!-- Student name -->
+            <span class="att-name">
+                {{ row.profile.user.first_name|default:row.profile.user.username }}
+            </span>
+
+            <!-- Room -->
+            <span class="att-room">{{ row.profile.room_number }}</span>
+
+            <!-- Current status -->
+            <span class="att-status">
+                {% if row.record %}
+                <span class="status-badge s-{{ row.record.status }}">
+                    {% if row.record.status == 'present' %}✅ Present
+                    {% elif row.record.status == 'absent' %}❌ Absent
+                    {% else %}🏖️ On Leave{% endif %}
+                </span>
+                {% if row.record.remarks %}
+                <span class="att-remark">{{ row.record.remarks }}</span>
+                {% endif %}
+                {% else %}
+                <span class="status-badge s-none">— Not Marked</span>
+                {% endif %}
+            </span>
+
+            <!-- MARK FORM -->
+            <span class="att-mark">
+                <form method="post" action="{% url 'warden_mark_attendance' %}"
+                      class="mark-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="student_id"
+                           value="{{ row.profile.user.id }}">
+                    <input type="hidden" name="date"
+                           value="{{ today|date:'Y-m-d' }}">
+                    <div class="mark-row">
+                        <select name="status" class="mark-select">
+                            <option value="present"
+                                {% if row.record and row.record.status == 'present' %}selected{% endif %}>
+                                ✅ Present
+                            </option>
+                            <option value="absent"
+                                {% if row.record and row.record.status == 'absent' %}selected{% endif %}>
+                                ❌ Absent
+                            </option>
+                            <option value="on_leave"
+                                {% if row.record and row.record.status == 'on_leave' %}selected{% endif %}>
+                                🏖️ On Leave
+                            </option>
+                        </select>
+                        <input type="text" name="remarks" class="mark-input"
+                            placeholder="Remarks"
+                            value="{{ row.record.remarks|default:'' }}">
+                        <button type="submit" class="mark-btn">Save</button>
+                    </div>
+                </form>
+            </span>
+
+        </div>
+        {% endfor %}
+
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🌙</div>
+        <p>No students assigned to you.</p>
+        <p class="empty-sub">Go to Admin panel and assign students to your profile.</p>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'warden_attendance/js/script.js' %}"></script>
+</body>
+</html>
+
+
+
+
+

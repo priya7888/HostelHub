@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+  <title>Warden Portal — HostelHub</title>
+  {% load static %}
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'warden_home/css/style.css' %}">
+</head>
+<body>
+
+  <!-- cursor div REMOVED — normal arrow cursor is now used -->
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+
+    <!-- NAV -->
+    <nav class="topnav">
+      <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em></span>
+      </div>
+      <div class="nav-mid">
+        <span class="nav-tag">Warden Portal</span>
+        <span class="nav-sep">·</span>
+        <span class="nav-tag">2024–25</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+          <span class="theme-icon" id="themeIcon">☀️</span>
+          <span class="theme-track"><span class="theme-thumb"></span></span>
+          <span class="theme-label" id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'logout' %}" class="nav-exit">Sign Out →</a>
+      </div>
+    </nav>
+
+    <!-- HERO BODY -->
+    <div class="hero-body">
+      <div class="hero-eyebrow">
+        <span class="eyebrow-line"></span>
+        Warden Portal · 2024–25
+      </div>
+      <div class="hero-title">
+        <span class="title-small">Welcome back,</span>
+        <span class="title-name" id="wardenName">
+          {{ request.user.first_name|default:request.user.username }}
+        </span>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-pill">
+          <span class="online-dot"></span> System Online
+        </div>
+        <div class="meta-pill">👮 Warden Access</div>
+        <div class="meta-pill">👥 <strong>{{ total_students }}</strong>&nbsp;Students</div>
+      </div>
+      <a href="{% url 'warden_dash' %}" class="hero-btn">
+        Go to Dashboard <span class="btn-arrow">→</span>
+      </a>
+    </div>
+
+    <!-- STATS BADGE -->
+    <div class="stats-badge">
+      <div class="sb-item">
+        <span class="sb-label">Present Today</span>
+        <span class="sb-val sb-green">{{ present_today }}</span>
+      </div>
+      <div class="sb-divider"></div>
+      <div class="sb-item">
+        <span class="sb-label">Absent</span>
+        <span class="sb-val sb-red">{{ absent_today }}</span>
+      </div>
+      <div class="sb-divider"></div>
+      <div class="sb-item">
+        <span class="sb-label">On Leave</span>
+        <span class="sb-val sb-amber">{{ on_leave_today }}</span>
+      </div>
+      <div class="sb-divider"></div>
+      <div class="sb-item">
+        <span class="sb-label">Complaints</span>
+        <span class="sb-val sb-amber">{{ pending_complaints }}</span>
+      </div>
+      <div class="sb-divider"></div>
+      <div class="sb-item">
+        <span class="sb-label">SOS Alerts</span>
+        <span class="sb-val sb-red">{{ pending_sos }}</span>
+      </div>
+      <div class="sb-divider"></div>
+      <div class="sb-item">
+        <span class="sb-label">Outings</span>
+        <span class="sb-val">{{ pending_outings }}</span>
+      </div>
+    </div>
+
+    <!-- SCROLL HINT -->
+    <div class="scroll-hint">
+      <div class="scroll-track"></div>
+      <span>scroll</span>
+    </div>
+  </section>
+
+  <script src="{% static 'warden_home/js/script.js' %}"></script>
+</body>
+</html>
+
+
+
+

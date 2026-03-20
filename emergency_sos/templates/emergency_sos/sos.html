@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Emergency SOS — HostelHub</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'emergency_sos/css/style.css' %}">
+</head>
+<body>
+
+
+
+{% if messages %}
+<div class="messages-wrap">
+    {% for message in messages %}
+    <div class="msg msg-alert">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <a href="{% url 'student_dashboard' %}" class="logo-text">Hostel<em>Hub</em></a>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'dashboard' %}" class="nav-back">← Dashboard</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Emergency</p>
+        <h1 class="page-title">SOS <em>Alert</em></h1>
+        <p class="page-sub">Send an instant alert to wardens and security.</p>
+    </div>
+
+    <!-- BIG SOS BUTTON SECTION -->
+    <div class="sos-section">
+
+        <div class="sos-ring-wrap">
+            <div class="sos-ring r1"></div>
+            <div class="sos-ring r2"></div>
+            <div class="sos-ring r3"></div>
+
+            <form method="post" id="sosForm">
+                {% csrf_token %}
+                <input type="hidden" name="message"
+                       value="Emergency! Please help immediately.">
+                <input type="hidden" name="location"
+                       value="Room {{ request.user.last_name }}">
+                <button type="submit" class="sos-btn" id="sosBtn">
+                    <span class="sos-icon">🚨</span>
+                    <span class="sos-text">SEND SOS</span>
+                    <span class="sos-sub">Tap to alert wardens</span>
+                </button>
+            </form>
+        </div>
+
+        <p class="sos-warning">
+            ⚠️ Only use in genuine emergencies. False alerts may result in disciplinary action.
+        </p>
+
+    </div>
+
+    <!-- CUSTOM MESSAGE FORM -->
+    <div class="custom-form-card">
+        <h3 class="form-title">Send Custom Alert</h3>
+        <p class="form-sub">Add a message or specific location for faster response.</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Message</label>
+                <textarea name="message" class="form-input" rows="3"
+                    placeholder="Describe your emergency..."
+                    required>Emergency! Please help immediately.</textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Your Location</label>
+                <input type="text" name="location" class="form-input"
+                    placeholder="e.g. Room 204, Corridor B, Mess Hall"
+                    value="Room {{ request.user.last_name }}">
+            </div>
+
+            <button type="submit" class="custom-sos-btn">
+                🚨 Send Custom Alert →
+            </button>
+        </form>
+    </div>
+
+    <!-- RECENT ALERTS -->
+    {% if recent_alerts %}
+    <div class="recent-section">
+        <h3 class="recent-title">Recent Alerts</h3>
+        <div class="alerts-list">
+            {% for alert in recent_alerts %}
+            <div class="alert-row" data-i="{{ forloop.counter0 }}">
+                <div class="alert-left">
+                    <span class="alert-msg">{{ alert.message|truncatechars:60 }}</span>
+                    <span class="alert-loc">📍 {{ alert.location|default:"Not specified" }}</span>
+                </div>
+                <div class="alert-right">
+                    <span class="alert-status as-{{ alert.status }}">
+                        {{ alert.get_status_display }}
+                    </span>
+                    <span class="alert-time">{{ alert.sent_at|date:"d M, H:i" }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'emergency_sos/js/script.js' %}"></script>
+</body>
+</html>

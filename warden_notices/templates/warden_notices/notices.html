@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Notices — Warden</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'warden_notices/css/style.css' %}">
+</head>
+<body>
+
+
+
+{% if messages %}
+<div class="messages-wrap">
+    {% for message in messages %}
+    <div class="msg">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Hostel<em>Hub</em></span>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'warden_dash' %}" class="nav-back">← Dashboard</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Notice Board</p>
+        <h1 class="page-title">Hostel <em>Notices</em></h1>
+        <p class="page-sub">Post and manage notices visible to all students.</p>
+    </div>
+
+    <!-- STATS + POST BUTTON -->
+    <div class="top-bar">
+        <div class="notice-counts">
+            <div class="nc-pill nc-urgent">
+                🚨 {{ urgent_count }} Urgent
+            </div>
+            <div class="nc-pill nc-important">
+                ⚠️ {{ important_count }} Important
+            </div>
+            <div class="nc-pill nc-normal">
+                📢 {{ normal_count }} Normal
+            </div>
+        </div>
+        <a href="{% url 'warden_add_notice' %}" class="new-btn">
+            + Post Notice
+        </a>
+    </div>
+
+    <!-- NOTICES LIST -->
+    {% if notices %}
+    <div class="notices-list">
+        {% for n in notices %}
+        <div class="notice-card priority-{{ n.priority }}" data-i="{{ forloop.counter0 }}">
+
+            <div class="nc-accent"></div>
+
+            <div class="nc-top">
+                <span class="nc-priority p-{{ n.priority }}">
+                    {% if n.priority == 'urgent' %}🚨 Urgent
+                    {% elif n.priority == 'important' %}⚠️ Important
+                    {% else %}📢 Notice{% endif %}
+                </span>
+                <div class="nc-right">
+                    <span class="nc-date">{{ n.posted_at|date:"d M Y" }}</span>
+                    <span class="nc-status {% if n.is_active %}status-active{% else %}status-inactive{% endif %}">
+                        {% if n.is_active %}✅ Active{% else %}❌ Inactive{% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <h3 class="nc-title">{{ n.title }}</h3>
+            <p class="nc-content">{{ n.content }}</p>
+
+            {% if n.expires_at %}
+            <div class="nc-expires">
+                ⏰ Expires: {{ n.expires_at|date:"d M Y" }}
+            </div>
+            {% endif %}
+
+            <div class="nc-footer">
+                <span class="nc-posted">
+                    Posted by you on {{ n.posted_at|date:"d M Y" }}
+                </span>
+                <form method="post"
+                      action="{% url 'warden_delete_notice' n.id %}"
+                      style="display:inline">
+                    {% csrf_token %}
+                    <button type="submit" class="delete-btn"
+                        onclick="return confirm('Delete this notice?')">
+                        🗑 Delete
+                    </button>
+                </form>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📢</div>
+        <p>No notices posted yet.</p>
+        <p class="empty-sub">Click Post Notice to add your first announcement.</p>
+        <a href="{% url 'warden_add_notice' %}" class="empty-btn">
+            + Post First Notice
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{% static 'warden_notices/js/script.js' %}"></script>
+</body>
+</html>
+
+
+
+
+

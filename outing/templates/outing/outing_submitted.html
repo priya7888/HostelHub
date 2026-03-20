@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+    <title>Request Submitted — HostelHub</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'outing/css/style.css' %}">
+</head>
+<body>
+
+
+<nav class="topnav">
+    <div class="nav-logo">
+        <span class="logo-dot"></span>
+        <a href="{% url 'student_dashboard' %}" class="logo-text">Hostel<em>Hub</em></a>
+    </div>
+    <div class="nav-right">
+        <button class="theme-btn" id="themeBtn">
+            <span id="themeIcon">☀️</span>
+            <span class="theme-track"><span class="theme-thumb"></span></span>
+            <span id="themeLabel">Light</span>
+        </button>
+        <a href="{% url 'outing_list' %}" class="nav-back">← My Requests</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+        <p class="page-eye">Outing Request</p>
+        <h1 class="page-title">Request <em>Submitted!</em></h1>
+        <p class="page-sub">Now send the approval link to your parent.</p>
+    </div>
+
+    <!-- SUCCESS CARD -->
+    <div class="submit-card">
+
+        <div class="submit-icon">✅</div>
+        <h3 class="submit-title">Request Submitted Successfully</h3>
+        <p class="submit-sub">
+            Your outing request to <strong>{{ outing.destination }}</strong>
+            is waiting for parent approval.
+        </p>
+
+        <!-- STEP 1 — Send WhatsApp -->
+        <div class="step-box">
+            <div class="step-num-big">Step 1</div>
+            <h4 class="step-title">Send to Parent via WhatsApp</h4>
+            <p class="step-desc">
+                Click the button below — WhatsApp will open with the message
+                ready to send to your parent's number
+                <strong>{{ parent_phone }}</strong>.
+            </p>
+            {% if whatsapp_url %}
+            <a href="{{ whatsapp_url }}" target="_blank" class="whatsapp-btn">
+                <span class="wa-icon">💬</span>
+                Send via WhatsApp
+            </a>
+            {% else %}
+            <div class="no-phone-warn">
+                ⚠️ No parent phone number found in your profile.
+                Please ask admin to update it.
+            </div>
+            {% endif %}
+        </div>
+
+        
+
+        <!-- STEP 3 — What happens next -->
+        <div class="step-box step-info">
+            <div class="step-num-big">Step 3</div>
+            <h4 class="step-title">What happens next?</h4>
+            <div class="next-steps">
+                <div class="ns-row">
+                    <span class="ns-icon">👨‍👩‍👦</span>
+                    <span>Parent opens link → Approves or Rejects</span>
+                </div>
+                <div class="ns-row">
+                    <span class="ns-icon">👮</span>
+                    <span>Warden reviews → Final approval</span>
+                </div>
+                <div class="ns-row">
+                    <span class="ns-icon">📱</span>
+                    <span>QR Pass generated → Show at gate</span>
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'outing_list' %}" class="back-btn">
+            View My Requests →
+        </a>
+
+    </div>
+
+</div>
+
+<script src="{% static 'outing/js/script.js' %}"></script>
+<script>
+function copyParentLink() {
+    const el  = document.getElementById('parentLink');
+    const txt = el ? el.textContent.trim() : '';
+    navigator.clipboard.writeText(txt).then(() => {
+        const btn = document.querySelector('.copy-link-btn');
+        if (btn) {
+            btn.textContent = '✓ Copied!';
+            btn.style.background = 'var(--green)';
+            btn.style.color = '#0d0d0d';
+            setTimeout(() => {
+                btn.textContent = 'Copy';
+                btn.style.background = '';
+                btn.style.color = '';
+            }, 2000);
+        }
+    });
+}
+</script>
+</body>
+</html>
