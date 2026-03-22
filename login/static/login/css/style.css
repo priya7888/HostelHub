@@ -7,8 +7,6 @@ html,body {
     background:#080808; color:#f5f2ed;
 }
 body { display:flex; }
-
-/* ── SLIDESHOW BACKGROUND ─────────────────── */
 .bg-slideshow {
     position:fixed; inset:0; z-index:0;
 }
@@ -50,7 +48,7 @@ body { display:flex; }
         rgba(0,0,0,0.45) 100%
     );
 }
-/* ── LEFT PANEL ───────────────────────────── */
+
 .left-panel {
     position:relative; z-index:2;
     width:48%; min-height:100vh;
@@ -82,7 +80,6 @@ body { display:flex; }
 }
 .brand-name em { font-style:normal; color:#e8b96a; }
 
-/* LEFT HERO */
 .left-title {
     font-family:'Playfair Display',serif;
     font-size:clamp(2.2rem,4vw,3.2rem);
@@ -96,8 +93,6 @@ body { display:flex; }
     font-size:0.9rem; color:rgba(255,255,255,0.45);
     line-height:1.7; margin-top:14px;
 }
-
-/* FEATURE LIST */
 .feature-list {
     display:grid; grid-template-columns:1fr 1fr; gap:10px;
 }
@@ -123,7 +118,6 @@ body { display:flex; }
 }
 .fi-icon { font-size:1.1rem; }
 
-/* LEFT FOOTER */
 .left-footer {
     display:flex; align-items:center; gap:8px;
     font-size:0.76rem; color:rgba(255,255,255,0.25);
@@ -139,8 +133,6 @@ body { display:flex; }
     0%,100%{ opacity:1; transform:scale(1); }
     50%    { opacity:0.5; transform:scale(1.4); }
 }
-
-/* ── RIGHT PANEL ──────────────────────────── */
 .right-panel {
     position:relative; z-index:2;
     width:52%; min-height:100vh;
@@ -205,7 +197,7 @@ body { display:flex; }
     color:#e8b96a;
 }
 
-/* FIELDS */
+
 .field-group { margin-bottom:18px; }
 .field-lbl {
     display:block; font-size:0.72rem; font-weight:600;
@@ -242,7 +234,6 @@ body { display:flex; }
 }
 .eye-btn:hover { opacity:1; }
 
-/* ERROR */
 .error-box {
     background:rgba(224,85,85,0.1);
     border:1px solid rgba(224,85,85,0.3);
@@ -259,7 +250,7 @@ body { display:flex; }
     80%    { transform:translateX(4px); }
 }
 
-/* LOGIN BUTTON */
+
 .login-btn {
     position:relative; overflow:hidden;
     width:100%; padding:14px;
@@ -300,14 +291,14 @@ body { display:flex; }
     opacity:0.7; pointer-events:none;
 }
 
-/* RIGHT FOOTER */
+
 .right-foot {
     text-align:center; margin-top:24px;
     font-size:0.7rem; color:rgba(255,255,255,0.2);
     letter-spacing:0.06em;
 }
 
-/* RESPONSIVE */
+
 @media (max-width:768px) {
     body { flex-direction:column; overflow:auto; height:auto; }
     .left-panel {

@@ -1,8 +1,6 @@
 console.log("🔍 Lost & Found Loaded");
 
-/* CURSOR */
 
-/* THEME */
 const html  = document.documentElement;
 const btn   = document.getElementById('themeBtn');
 const icon  = document.getElementById('themeIcon');
@@ -21,7 +19,7 @@ function updateUI(t) {
     label.textContent = t === 'dark' ? 'Light' : 'Dark';
 }
 
-/* CARD REVEAL */
+
 const cards = document.querySelectorAll('.item-card');
 const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
@@ -33,7 +31,7 @@ const obs = new IntersectionObserver(entries => {
 }, { threshold: 0.1 });
 cards.forEach(c => obs.observe(c));
 
-/* CARD TILT */
+
 cards.forEach(card => {
     card.addEventListener('mousemove', e => {
         const r  = card.getBoundingClientRect();
@@ -50,7 +48,7 @@ cards.forEach(card => {
     });
 });
 
-/* AUTO HIDE MESSAGES */
+
 setTimeout(() => {
     document.querySelectorAll('.msg').forEach(m => {
         m.style.transition = 'opacity 0.5s';

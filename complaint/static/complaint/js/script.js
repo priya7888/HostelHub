@@ -1,7 +1,4 @@
 console.log("📝 Complaints Loaded");
-
-/* CURSOR */
-/* THEME */
 const html  = document.documentElement;
 const btn   = document.getElementById('themeBtn');
 const icon  = document.getElementById('themeIcon');
@@ -19,8 +16,6 @@ function updateUI(t) {
     icon.textContent  = t === 'dark' ? '☀️' : '🌙';
     label.textContent = t === 'dark' ? 'Light' : 'Dark';
 }
-
-/* CARD REVEAL */
 const cards = document.querySelectorAll('.complaint-card');
 const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
@@ -31,8 +26,6 @@ const obs = new IntersectionObserver(entries => {
     });
 }, { threshold: 0.1 });
 cards.forEach(c => obs.observe(c));
-
-/* AUTO HIDE MESSAGES */
 setTimeout(() => {
     document.querySelectorAll('.msg').forEach(m => {
         m.style.transition = 'opacity 0.5s';

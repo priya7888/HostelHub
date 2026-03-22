@@ -1,6 +1,5 @@
 console.log("🏠 HostelHub Login");
 
-/* BACKGROUND SLIDESHOW */
 const slides = document.querySelectorAll('.bg-slide');
 let current  = 0;
 
@@ -12,14 +11,13 @@ function nextSlide() {
 
 setInterval(nextSlide, 4000);
 
-/* FEATURE ITEMS REVEAL */
+
 setTimeout(() => {
     document.querySelectorAll('.feature-item').forEach((el, i) => {
         setTimeout(() => el.classList.add('visible'), i * 120);
     });
 }, 400);
 
-/* ROLE SELECTOR */
 const radios    = document.querySelectorAll('input[name="role"]');
 const roomGroup = document.getElementById('roomGroup');
 const roomInput = document.getElementById('roomInput');
@@ -37,7 +35,6 @@ radios.forEach(r => {
     });
 });
 
-/* PASSWORD TOGGLE */
 const eyeBtn    = document.getElementById('eyeBtn');
 const passInput = document.getElementById('passInput');
 if (eyeBtn) {
@@ -52,7 +49,6 @@ if (eyeBtn) {
     });
 }
 
-/* LOGIN BUTTON LOADING */
 const form     = document.getElementById('loginForm');
 const loginBtn = document.getElementById('loginBtn');
 const btnText  = document.getElementById('btnText');
