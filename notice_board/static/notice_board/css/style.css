@@ -151,10 +151,11 @@ body {
     background:var(--card-bg); border:1px solid var(--border);
     border-radius:20px; padding:26px;
     position:relative; overflow:hidden;
-    opacity:0; transform:translateY(16px);
-    transition:opacity 0.5s, transform 0.5s,
-                background 0.3s, border-color 0.3s, box-shadow 0.3s;
+    opacity:1;
+    transform:translateY(0);
+    transition:background 0.3s, border-color 0.3s, box-shadow 0.3s;
     box-shadow:var(--shadow);
+    margin-bottom:14px;
 }
 .notice-card.visible { opacity:1; transform:translateY(0); }
 .notice-card:hover {

@@ -19,19 +19,16 @@ function updateUI(t) {
     if (label) label.textContent = t === 'dark' ? 'Light' : 'Dark';
 }
 
-const cards = document.querySelectorAll('.notice-card');
-const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-        if (!e.isIntersecting) return;
-        const i = parseInt(e.target.dataset.i) || 0;
-        setTimeout(() => e.target.classList.add('visible'), i * 100);
-        obs.unobserve(e.target);
+/* FORCE ALL CARDS VISIBLE IMMEDIATELY */
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.notice-card').forEach((c, i) => {
+        setTimeout(() => c.classList.add('visible'), i * 150);
     });
-}, { threshold: 0.08 });
-cards.forEach(c => obs.observe(c));
+});
 
+/* FALLBACK */
 setTimeout(() => {
     document.querySelectorAll('.notice-card').forEach(c => {
         c.classList.add('visible');
     });
-}, 600);
+}, 300);
