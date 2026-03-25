@@ -1,6 +1,3 @@
-from django.shortcuts import render
-
-# Create your views here.
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -13,19 +10,13 @@ def warden_notices(request):
 
     from notice_board.models import Notice
 
-    notices = Notice.objects.filter(
-        posted_by=request.user
-    ).order_by('-posted_at')
-
-    urgent_count    = notices.filter(priority='urgent').count()
-    important_count = notices.filter(priority='important').count()
-    normal_count    = notices.filter(priority='normal').count()
+    notices = Notice.objects.all().order_by('-posted_at')
 
     return render(request, 'warden_notices/notices.html', {
         'notices':         notices,
-        'urgent_count':    urgent_count,
-        'important_count': important_count,
-        'normal_count':    normal_count,
+        'urgent_count':    notices.filter(priority='urgent').count(),
+        'important_count': notices.filter(priority='important').count(),
+        'normal_count':    notices.filter(priority='normal').count(),
     })
 
 
@@ -50,7 +41,8 @@ def warden_add_notice(request):
             expires_at = expires_at,
             is_active  = True,
         )
-        messages.success(request, f'Notice "{title}" posted successfully!')
+        messages.success(request,
+            f'Notice "{title}" posted successfully!')
         return redirect('warden_notices')
 
     return render(request, 'warden_notices/add_notice.html')
@@ -62,7 +54,7 @@ def warden_delete_notice(request, notice_id):
         return redirect('login')
 
     from notice_board.models import Notice
-    notice = get_object_or_404(Notice, id=notice_id, posted_by=request.user)
+    notice = get_object_or_404(Notice, id=notice_id)
     title  = notice.title
     notice.delete()
     messages.success(request, f'Notice "{title}" deleted.')

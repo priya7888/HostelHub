@@ -1,21 +1,32 @@
 from django.db import models
-from django.db import models
 from django.contrib.auth.models import User
 
+
 class Notice(models.Model):
-    PRIORITY = [
-        ('normal','Normal'),
-        ('important','Important'),
-        ('urgent','Urgent')
+    PRIORITY_CHOICES = [
+        ('normal',    'Normal'),
+        ('important', 'Important'),
+        ('urgent',    'Urgent'),
     ]
+
     title      = models.CharField(max_length=200)
     content    = models.TextField()
-    priority   = models.CharField(max_length=20, choices=PRIORITY, default='normal')
-    posted_by  = models.ForeignKey(User, on_delete=models.CASCADE)
+    priority   = models.CharField(
+        max_length=20,
+        choices=PRIORITY_CHOICES,
+        default='normal'
+    )
+    posted_by  = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='notices'
+    )
     posted_at  = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateField(blank=True, null=True)
+    expires_at = models.DateField(null=True, blank=True)
     is_active  = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"[{self.priority}] {self.title}"
-# Create your models here.
+        return self.title
+
+    class Meta:
+        ordering = ['-posted_at']
