@@ -1,8 +1,4 @@
 console.log("🚨 Emergency SOS Loaded");
-
-/* CURSOR */
-
-/* THEME */
 const html  = document.documentElement;
 const btn   = document.getElementById('themeBtn');
 const icon  = document.getElementById('themeIcon');
@@ -20,8 +16,6 @@ function updateUI(t) {
     icon.textContent  = t === 'dark' ? '☀️' : '🌙';
     label.textContent = t === 'dark' ? 'Light' : 'Dark';
 }
-
-/* SOS BUTTON CONFIRM */
 const sosForm = document.getElementById('sosForm');
 const sosBtn  = document.getElementById('sosBtn');
 if (sosForm && sosBtn) {
@@ -47,8 +41,6 @@ if (sosForm && sosBtn) {
         }, 800);
     });
 }
-
-/* ALERT ROWS REVEAL */
 const rows = document.querySelectorAll('.alert-row');
 const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
@@ -59,15 +51,11 @@ const obs = new IntersectionObserver(entries => {
     });
 }, { threshold: 0.1 });
 rows.forEach(r => obs.observe(r));
-
-/* FALLBACK */
 setTimeout(() => {
     document.querySelectorAll('.alert-row').forEach(r => {
         r.classList.add('visible');
     });
 }, 600);
-
-/* AUTO HIDE MESSAGES */
 setTimeout(() => {
     document.querySelectorAll('.msg').forEach(m => {
         m.style.transition = 'opacity 0.5s';

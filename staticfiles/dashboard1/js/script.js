@@ -1,8 +1,4 @@
 console.log("🏠 Dashboard Loaded");
-
-/* CURSOR */
-
-/* THEME */
 const html  = document.documentElement;
 const btn   = document.getElementById('themeBtn');
 const icon  = document.getElementById('themeIcon');
@@ -20,8 +16,6 @@ function updateUI(t) {
     icon.textContent  = t === 'dark' ? '☀️' : '🌙';
     label.textContent = t === 'dark' ? 'Light' : 'Dark';
 }
-
-/* CARD REVEAL */
 const cards = document.querySelectorAll('.svc-card');
 const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
@@ -32,8 +26,6 @@ const obs = new IntersectionObserver(entries => {
     });
 }, { threshold: 0.1 });
 cards.forEach(c => obs.observe(c));
-
-/* CARD TILT */
 cards.forEach(card => {
     card.addEventListener('mousemove', e => {
         const r  = card.getBoundingClientRect();
