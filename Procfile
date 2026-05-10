@@ -1,0 +1,1 @@
+web: gunicorn Hostel_Helper.wsgi --log-file -
